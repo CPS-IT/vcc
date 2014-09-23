@@ -38,7 +38,7 @@ class tx_vcc_hook_processDatamapClassHook extends tx_vcc_hook_abstractHookObject
 	public function processDatamap_afterAllOperations(&$parentObject) {
 		foreach ($parentObject->datamap as $table => $record) {
 			$uid = key($record);
-			$uid = isset($parentObject->substNEWwithIDs['uid']) ? $parentObject->substNEWwithIDs['uid'] : $uid;
+			$uid = isset($parentObject->substNEWwithIDs[$uid]) ? $parentObject->substNEWwithIDs[$uid] : $uid;
 			$pageId = $parentObject->getPID($table, $uid);
 			if ($this->isHookAccessible($pageId, $table)) {
 				$resultArray = $this->communicationService->sendClearCacheCommandForTables($table, $uid, '', FALSE);
