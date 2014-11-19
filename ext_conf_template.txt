@@ -16,8 +16,8 @@ stripSlash = 0
 # cat=basic/enable/050; type=boolean; label=Support index.php script: If enabled a request for index.php?id= script is sent as well.
 enableIndexScript = 0
 
-# cat=basic/enable/060; type=int+; label=Maximum age of log entries: Sets the maximum age of log entries in days.
-maxLogAge = 30
+# cat=basic/enable/060; type=options[Disabled=0,Minimal=1,Debug=3]; label=Logging mode: Select which information is written in the database.
+loggingMode = 0
 
-# cat=basic/enable/070; type=boolean; label=Debug mode: Enable debug mode to log additional information and show all cache clearing actions.
-debug = 0
+# cat=basic/enable/070; type=int+; label=Maximum age of log entries: Sets the maximum age of log entries in days.
+maxLogAge = 30

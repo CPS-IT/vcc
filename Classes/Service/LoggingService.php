@@ -31,16 +31,15 @@
  */
 class tx_vcc_service_loggingService implements t3lib_Singleton {
 
+	const MODE_DISABLED = 0;
+	const MODE_MINIMAL = 1;
+	const MODE_DEBUG = 2;
+
 	const DEBUG = 99;
-
 	const ERROR = 4;
-
 	const INFO = 2;
-
 	const NOTICE = 1;
-
 	const OK = 0;
-
 	const WARNING = 3;
 
 	/**
@@ -51,7 +50,7 @@ class tx_vcc_service_loggingService implements t3lib_Singleton {
 	/**
 	 * @var integer
 	 */
-	protected $debug = 0;
+	protected $loggingMode = 0;
 
 	/**
 	 * @var string
@@ -71,7 +70,7 @@ class tx_vcc_service_loggingService implements t3lib_Singleton {
 		$this->injectExtensionSettingService($extensionSettingService);
 
 		$configuration = $this->extensionSettingService->getConfiguration();
-		$this->debug = $configuration['debug'];
+		$this->loggingMode = $configuration['loggingMode'];
 		$this->maxLogAge = $configuration['maxLogAge'];
 
 		$this->hash = md5(uniqid('LoggingService', TRUE));
@@ -92,7 +91,7 @@ class tx_vcc_service_loggingService implements t3lib_Singleton {
 	 * @return void
 	 */
 	public function debug($message, $logData = array(), $pid = 0, $callerDepth = 2, $caller = NULL) {
-		if ($this->debug) {
+		if ($this->loggingMode & self::MODE_DEBUG) {
 			// Adjust callerDepth due to debug function
 			$callerDepth++;
 			$this->log($message, $logData, self::DEBUG, $pid, $callerDepth, $caller);
@@ -103,28 +102,30 @@ class tx_vcc_service_loggingService implements t3lib_Singleton {
 	 * @return void
 	 */
 	public function log($message, $logData = array(), $type = self::INFO, $pid = 0, $callerDepth = 2, $caller = NULL) {
-		// Get caller if not already set
-		if ($caller === NULL) {
-			$caller = $this->getCallerFromBugtrace($callerDepth);
+		if ($this->loggingMode & self::MODE_MINIMAL) {
+			// Get caller if not already set
+			if ($caller === NULL) {
+				$caller = $this->getCallerFromBugtrace($callerDepth);
+			}
+
+			$insertArray = array(
+				'pid' => $pid,
+				'tstamp' => time(),
+				'be_user' => $GLOBALS['BE_USER']->user['uid'],
+				'type' => $type,
+				'message' => $message,
+				'log_data' => serialize($logData),
+				'caller' => serialize($caller),
+				'hash' => $this->hash
+			);
+			$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_vcc_log', $insertArray);
+
+			// Remove old entries
+			$month = date('m', time());
+			$day = 0 - $this->maxLogAge;
+			$year = date('Y', time());
+			$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_vcc_log', 'tstamp<' . mktime(0, 0, 0, $month, $day, $year));
 		}
-
-		$insertArray = array(
-			'pid' => $pid,
-			'tstamp' => time(),
-			'be_user' => $GLOBALS['BE_USER']->user['uid'],
-			'type' => $type,
-			'message' => $message,
-			'log_data' => serialize($logData),
-			'caller' => serialize($caller),
-			'hash' => $this->hash
-		);
-		$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_vcc_log', $insertArray);
-
-		// Remove old entries
-		$month = date('m', time());
-		$day = 0 - $this->maxLogAge;
-		$year = date('Y', time());
-		$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_vcc_log', 'tstamp<' . mktime(0, 0, 0, $month, $day, $year));
 	}
 
 	/**

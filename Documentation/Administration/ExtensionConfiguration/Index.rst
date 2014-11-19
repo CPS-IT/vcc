@@ -34,12 +34,16 @@ Support index.php script [basic.enableIndexScript]
 If you use realurl extension (or any other url rendering) this option enables the cache clearing for alternative
 index.php url. This might help your editor to see the latest version if they view the page within the backend.
 
+Logging mode [basic.loggingMode]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can choose between three different types of logging. Log messages are stored in the database table "tx_vcc_log"
+
+- Disabled: Nothing is logged
+- Minimal: Only communication with Varnish server is logged
+- Debug: Service actions and parameter are logged
+
 Maximum age of log entries [basic.maxLogAge]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For each action one or multiple log entries (depends on debug setting) are generated in an own table. To minimize the table size you can set a specific age (in days) for the entries.
-
-Debug mode [basic.debug]
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-You can enable a detailed logging of the values generated for each action. These information are stored in an own database table as well as send to any devLog extension.

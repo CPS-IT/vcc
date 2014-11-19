@@ -135,7 +135,7 @@ class tx_vcc_service_communicationService implements t3lib_Singleton {
 	 * @return bool
 	 */
 	public function displayBackendMessage() {
-		return ($this->configuration['debug'] || $this->configuration['cacheControl'] === 'manual');
+		return ($this->configuration['loggingMode'] & tx_vcc_service_loggingService::MODE_DEBUG || $this->configuration['cacheControl'] === 'manual');
 	}
 
 	/**
