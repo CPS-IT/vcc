@@ -85,7 +85,6 @@ class tx_vcc_service_communicationService implements t3lib_Singleton {
 	 * Injects the extension setting service
 	 *
 	 * @param tx_vcc_service_extensionSettingService $extensionSettingService
-	 *
 	 * @return void
 	 */
 	public function injectExtensionSettingService(tx_vcc_service_extensionSettingService $extensionSettingService) {
@@ -96,7 +95,6 @@ class tx_vcc_service_communicationService implements t3lib_Singleton {
 	 * Injects the logging service
 	 *
 	 * @param tx_vcc_service_loggingService $loggingService
-	 *
 	 * @return void
 	 */
 	public function injectLoggingService(tx_vcc_service_loggingService $loggingService) {
@@ -107,7 +105,6 @@ class tx_vcc_service_communicationService implements t3lib_Singleton {
 	 * Injects the TSConfig service
 	 *
 	 * @param tx_vcc_service_tsConfigService $tsConfigService
-	 *
 	 * @return void
 	 */
 	public function injectTsConfigService(tx_vcc_service_tsConfigService $tsConfigService) {
@@ -143,7 +140,6 @@ class tx_vcc_service_communicationService implements t3lib_Singleton {
 	 *
 	 * @param array $resultArray
 	 * @param bool $wrapWithTags
-	 *
 	 * @return string
 	 */
 	public function generateBackendMessage(array $resultArray, $wrapWithTags = TRUE) {
@@ -239,8 +235,7 @@ class tx_vcc_service_communicationService implements t3lib_Singleton {
 	 *
 	 * @param string $fileName
 	 * @param string $host
-	 * @param boolean $quote
-	 *
+	 * @param bool $quote
 	 * @return array
 	 */
 	public function sendClearCacheCommandForFiles($fileName, $host = '', $quote = TRUE) {
@@ -281,10 +276,9 @@ class tx_vcc_service_communicationService implements t3lib_Singleton {
 	 * Send clear cache commands for pages to defined server
 	 *
 	 * @param string $table
-	 * @param integer $id
+	 * @param int $uid
 	 * @param string $host
-	 * @param boolean $quote
-	 *
+	 * @param bool $quote
 	 * @return array
 	 */
 	public function sendClearCacheCommandForTables($table, $uid, $host = '', $quote = TRUE) {
@@ -359,6 +353,9 @@ class tx_vcc_service_communicationService implements t3lib_Singleton {
 
 	/**
 	 * Load a faked frontend to be able to use stdWrap.typolink
+	 *
+	 * @param int $id
+	 * @return void
 	 */
 	protected function createTSFE($id) {
 		if (!is_object($GLOBALS['TT'])) {
@@ -384,10 +381,9 @@ class tx_vcc_service_communicationService implements t3lib_Singleton {
 	 * Processes the CURL request and sends action to Varnish server
 	 *
 	 * @param string $url
-	 * @param integer $pid
+	 * @param int $pid
 	 * @param string $host
-	 * @param boolean $quote
-	 *
+	 * @param bool $quote
 	 * @return array
 	 */
 	protected function processClearCacheCommand($url, $pid, $host = '', $quote = TRUE) {
@@ -521,7 +517,6 @@ class tx_vcc_service_communicationService implements t3lib_Singleton {
 	 * Remove any host from an url
 	 *
 	 * @param string $url
-	 *
 	 * @return string
 	 */
 	protected function removeHost($url) {

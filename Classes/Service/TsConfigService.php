@@ -53,7 +53,6 @@ class tx_vcc_service_tsConfigService implements t3lib_Singleton {
 	 * Injects the logging service
 	 *
 	 * @param tx_vcc_service_loggingService $loggingService
-	 *
 	 * @return void
 	 */
 	public function injectLoggingService(tx_vcc_service_loggingService $loggingService) {
@@ -63,8 +62,7 @@ class tx_vcc_service_tsConfigService implements t3lib_Singleton {
 	/**
 	 * Returns the configuration
 	 *
-	 * @param integer $id
-	 *
+	 * @param int $id
 	 * @return array
 	 */
 	public function getConfiguration($id) {

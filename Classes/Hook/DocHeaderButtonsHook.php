@@ -46,7 +46,6 @@ class tx_vcc_hook_docHeaderButtonsHook extends tx_vcc_hook_abstractHookObject {
 	 *
 	 * @param array $params
 	 * @param template $pObj
-	 *
 	 * @return void
 	 */
 	public function addButton($params, $pObj) {
@@ -115,8 +114,7 @@ class tx_vcc_hook_docHeaderButtonsHook extends tx_vcc_hook_abstractHookObject {
 	/**
 	 * Returns the icon button on condition wrapped with a form
 	 *
-	 * @param boolean $wrapWithForm
-	 *
+	 * @param bool $wrapWithForm
 	 * @return string
 	 */
 	protected function generateButton($wrapWithForm = FALSE) {
@@ -138,8 +136,7 @@ class tx_vcc_hook_docHeaderButtonsHook extends tx_vcc_hook_abstractHookObject {
 	 * Evaluate request and send clear cache commands
 	 *
 	 * @param string $table
-	 * @param integer $uid
-	 *
+	 * @param int $uid
 	 * @return string
 	 */
 	protected function process($table, $uid) {

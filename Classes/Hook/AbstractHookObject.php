@@ -63,7 +63,6 @@ abstract class tx_vcc_hook_abstractHookObject {
 	 * Injects the communication service
 	 *
 	 * @param tx_vcc_service_communicationService $communicationService
-	 *
 	 * @return void
 	 */
 	protected function injectCommunicationService(tx_vcc_service_communicationService $communicationService) {
@@ -74,7 +73,6 @@ abstract class tx_vcc_hook_abstractHookObject {
 	 * Injects the TSConfig service
 	 *
 	 * @param tx_vcc_service_tsConfigService $tsConfigService
-	 *
 	 * @return void
 	 */
 	protected function injectTsConfigService(tx_vcc_service_tsConfigService $tsConfigService) {
@@ -84,10 +82,9 @@ abstract class tx_vcc_hook_abstractHookObject {
 	/**
 	 * Checks if the button could be inserted
 	 *
-	 * @param integer $pageId
+	 * @param int $pageId
 	 * @param string $table
-	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	protected function isHookAccessible($pageId, $table) {
 		$access = FALSE;

@@ -38,7 +38,6 @@ interface tx_vcc_hook_communicationServiceHookInterface {
 	 * @param string $request
 	 * @param array $response
 	 * @param tx_vcc_service_communicationService $pObj
-	 *
 	 * @return void
 	 */
 	public function preProcess(&$ch, &$request, &$response, &$pObj);
@@ -51,7 +50,6 @@ interface tx_vcc_hook_communicationServiceHookInterface {
 	 * @param string $request
 	 * @param array $response
 	 * @param tx_vcc_service_communicationService $pObj
-	 *
 	 * @return void
 	 */
 	public function postProcess(&$ch, &$request, &$response, &$pObj);

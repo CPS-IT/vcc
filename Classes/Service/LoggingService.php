@@ -48,7 +48,7 @@ class tx_vcc_service_loggingService implements t3lib_Singleton {
 	protected $extensionSettingService = NULL;
 
 	/**
-	 * @var integer
+	 * @var int
 	 */
 	protected $loggingMode = 0;
 
@@ -58,7 +58,7 @@ class tx_vcc_service_loggingService implements t3lib_Singleton {
 	protected $hash = '';
 
 	/**
-	 * @var integer
+	 * @var int
 	 */
 	protected $maxLogAge = 0;
 
@@ -80,7 +80,6 @@ class tx_vcc_service_loggingService implements t3lib_Singleton {
 	 * Injects the extension setting service
 	 *
 	 * @param tx_vcc_service_extensionSettingService $extensionSettingService
-	 *
 	 * @return void
 	 */
 	public function injectExtensionSettingService(tx_vcc_service_extensionSettingService $extensionSettingService) {
@@ -88,6 +87,11 @@ class tx_vcc_service_loggingService implements t3lib_Singleton {
 	}
 
 	/**
+	 * @param string $message
+	 * @param array $logData
+	 * @param int $pid
+	 * @param int $callerDepth
+	 * @param null $caller
 	 * @return void
 	 */
 	public function debug($message, $logData = array(), $pid = 0, $callerDepth = 2, $caller = NULL) {
@@ -99,7 +103,12 @@ class tx_vcc_service_loggingService implements t3lib_Singleton {
 	}
 
 	/**
-	 * @return void
+	 * @param string $message
+	 * @param array $logData
+	 * @param int $type
+	 * @param int $pid
+	 * @param int $callerDepth
+	 * @param null $caller
 	 */
 	public function log($message, $logData = array(), $type = self::INFO, $pid = 0, $callerDepth = 2, $caller = NULL) {
 		if ($this->loggingMode & self::MODE_MINIMAL) {
@@ -129,7 +138,7 @@ class tx_vcc_service_loggingService implements t3lib_Singleton {
 	}
 
 	/**
-	 * @param integer $callerDepth
+	 * @param int $callerDepth
 	 *
 	 * @return array
 	 */
