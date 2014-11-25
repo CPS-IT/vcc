@@ -29,7 +29,7 @@
  * @package TYPO3
  * @subpackage vcc
  */
-abstract class tx_vcc_hook_abstractHookObject {
+abstract class Tx_Vcc_Hook_AbstractVarnishHook {
 
 	/**
 	 * @var tx_vcc_service_communicationService|NULL

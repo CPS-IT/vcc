@@ -2,7 +2,7 @@
 $extensionPath = t3lib_extMgm::extPath('vcc') . 'Classes/';
 
 return array(
-	'tx_vcc_hook_abstracthookobject' => $extensionPath . 'Hook/AbstractHookObject.php',
+	'tx_vcc_hook_abstractvarnishhook' => $extensionPath . 'Hook/Tx_Vcc_Hook_AbstractVarnishHook.php',
 	'tx_vcc_hook_communicationServiceHookInterface' => $extensionPath . 'Interface/CommunicationServiceHookInterface.php',
 	'tx_vcc_service_communicationservice' => $extensionPath . 'Service/CommunicationService.php',
 	'tx_vcc_service_extensionsettingservice' => $extensionPath . 'Service/ExtensionSettingService.php',

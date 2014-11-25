@@ -29,7 +29,7 @@
  * @package TYPO3
  * @subpackage vcc
  */
-class tx_vcc_hook_clearCachePostProc extends tx_vcc_hook_abstractHookObject{
+class Tx_Vcc_Hook_ClearCachePostProcessHook extends Tx_Vcc_Hook_AbstractVarnishHook {
 
 	/**
 	 * @param array $params
@@ -53,7 +53,7 @@ class tx_vcc_hook_clearCachePostProc extends tx_vcc_hook_abstractHookObject{
 			}
 			if ($this->communicationService->displayBackendMessage()) {
 				$this->attachResultArrayToPageRenderer(
-					'tx_vcc_hook_clearCachePostProc_clearCacheByCommand_' . $params['cacheCmd'],
+					'Tx_Vcc_Hook_ClearCachePostProcessHook_clearCacheByCommand_' . $params['cacheCmd'],
 					$resultArray
 				);
 			}
@@ -61,8 +61,8 @@ class tx_vcc_hook_clearCachePostProc extends tx_vcc_hook_abstractHookObject{
 	}
 }
 
-if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Hook/ClearCachePostProc.php']) {
-	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Hooks/ClearCachePostProc.php']);
+if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Hook/Tx_Vcc_Hook_ClearCachePostProcessHook.php']) {
+	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Hooks/Tx_Vcc_Hook_ClearCachePostProcessHook.php']);
 }
 
 ?>
