@@ -7,14 +7,6 @@
 backend default {
 	.host = "127.0.0.1";
 	.port = "80";
-
-	# Define health test
-	#.probe = {
-	#       .url = "/clear.gif";
-	#       .timeout = 1s;
-	#       .window = 5;
-	#       .threshold = 3;
-	#}
 }
 
 # Enable flushing access only to internals
@@ -35,11 +27,6 @@ sub vcl_recv {
 
 	# Allow the backend to deliver old content up to 1 day
 	set req.grace = 24h;
-	#if (req.backend.healthy) {
-	#	set req.grace = 30s;
-	#} else {
-	#	set req.grace = 24h;
-	#}
 
 	if (req.request != "GET" &&
 		req.request != "HEAD" &&
@@ -53,8 +40,8 @@ sub vcl_recv {
 		if (req.request == "BAN" || req.request == "BANALL") {
 			if (client.ip ~ flushers) {
 				if (req.http.X-Host) {
-					if (req.http.X-Url) {
-						ban("req.http.host ~ ^" + req.http.X-Host + "$ && req.url ~ " + req.url + "[/]?(\?.*)?$");
+					if (req.url != "/") {
+						ban("req.http.host ~ ^" + req.http.X-Host + "$ && req.url ~ ^" + req.url + "[/]?(\?.*)?$");
 					} else {
 						ban("req.http.host ~ ^" + req.http.X-Host + "$");
 					}
@@ -72,14 +59,9 @@ sub vcl_recv {
 	}
 
 	# If we work in backend don't cache anything
-	if (req.url ~ "typo3/") {
+	if (req.http.Cookie ~ "be_typo_user") {
 		return (pipe);
 	}
-
-	# If you use an admin panel, enable the cookie check
-	#if (req.http.Cookie ~ "be_typo_user") {
-	#	return (pipe);
-	#}
 
 	# If neither GET nor HEAD request, send to backend but do not cached
 	# This means that POST requests are not cached
@@ -163,6 +145,9 @@ sub vcl_fetch {
 		return (hit_for_pass);
 	}
 
+	# Add additional information for acl flushers
+	set beresp.http.X-Host = req.http.Host;
+
 	return (deliver);
 }
 
@@ -172,6 +157,7 @@ sub vcl_deliver {
 	remove resp.http.Via;
 	remove resp.http.X-Powered-By;
 	remove resp.http.X-Varnish;
+	remove resp.http.X-Host;
 
 	return (deliver);
 }
