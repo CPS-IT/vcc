@@ -34,25 +34,27 @@ interface tx_vcc_hook_communicationServiceHookInterface {
 	/**
 	 * Function which is called before the request is sent to the server
 	 *
+	 * @param array $params
 	 * @param resource $ch
 	 * @param string $request
 	 * @param array $response
 	 * @param tx_vcc_service_communicationService $pObj
 	 * @return void
 	 */
-	public function preProcess(&$ch, &$request, &$response, &$pObj);
+	public function preProcess($params, &$ch, &$request, &$response, &$pObj);
 
 	/**
 	 * Function which is called after the request was sent to the server and
 	 * some response options were set
 	 *
+	 * @param array $params
 	 * @param resource $ch
 	 * @param string $request
 	 * @param array $response
 	 * @param tx_vcc_service_communicationService $pObj
 	 * @return void
 	 */
-	public function postProcess(&$ch, &$request, &$response, &$pObj);
+	public function postProcess($params, &$ch, &$request, &$response, &$pObj);
 }
 
 ?>

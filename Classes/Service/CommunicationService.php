@@ -465,9 +465,16 @@ class tx_vcc_service_communicationService implements t3lib_Singleton {
 					curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
 
 					// Include preProcess hook (e.g. to set some alternative curl options
+					$params = array(
+						'host' => $xHost,
+						'pid' => $pid,
+						'quote' => $quote,
+						'server' => $server,
+						'url' => $url,
+					);
 					foreach ($this->hookObjects as $hookObject) {
 						/** @var tx_vcc_hook_communicationServiceHookInterface $hookObject */
-						$hookObject->preProcess($ch, $request, $response, $this);
+						$hookObject->preProcess($params, $ch, $request, $response, $this);
 					}
 					unset($hookObject);
 
@@ -484,7 +491,7 @@ class tx_vcc_service_communicationService implements t3lib_Singleton {
 					// Include postProcess hook (e.g. to start some other jobs)
 					foreach ($this->hookObjects as $hookObject) {
 						/** @var tx_vcc_hook_communicationServiceHookInterface $hookObject */
-						$hookObject->postProcess($ch, $request, $response, $this);
+						$hookObject->postProcess($params, $ch, $request, $response, $this);
 					}
 					unset($hookObject);
 
