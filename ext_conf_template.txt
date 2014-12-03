@@ -7,8 +7,8 @@ httpMethod = BAN
 # cat=basic/enable/030; type=options[HTTP/1.0=http_10,HTTP/1.1=http_11]; label=HTTP protocol: The HTTP protocol to use for the HTTP method.
 httpProtocol = http_11
 
-# cat=basic/enable/035; type=options[Manual=manual,Automatic=automatic]; label=Cache handling: Choose "manual" to press the Varnish icon for cache clearing or "automatic" to clear Varnish cache by saving a record.
-cacheControl = manual
+# cat=basic/enable/035; type=options[Disabled=0,Automatic=automatic,Manual=manual]; label=Cache handling: Choose "manual" to press the Varnish icon for cache clearing or "automatic" to clear Varnish cache by saving a record.
+cacheControl = 0
 
 # cat=basic/enable/040; type=boolean; label=Strip slash: Strip appended slash in requested url to be able to adjust behaviour in Varnish vcl configuration.
 stripSlash = 0
