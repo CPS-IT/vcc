@@ -396,7 +396,7 @@ class tx_vcc_service_communicationService implements t3lib_Singleton {
 			);
 
 			// Build request
-			if ($this->configuration['stripSlash']) {
+			if ($this->configuration['stripSlash'] && $url !== '/') {
 				$url = rtrim($url, '/');
 			}
 			$request = $server . '/' . ltrim($url, '/');
