@@ -39,7 +39,11 @@ class Tx_Vcc_Hook_RecordSavedPostProcessHook extends Tx_Vcc_Hook_AbstractVarnish
 		foreach ($parentObject->datamap as $table => $record) {
 			$uid = key($record);
 			$uid = isset($parentObject->substNEWwithIDs[$uid]) ? $parentObject->substNEWwithIDs[$uid] : $uid;
-			$pageId = $parentObject->getPID($table, $uid);
+			if ($table === 'pages') {
+				$pageId = $uid;
+			} else {
+				$pageId = $parentObject->getPID($table, $uid);
+			}
 			if ($this->isHookAccessible($pageId, $table)) {
 				$resultArray = $this->communicationService->sendClearCacheCommandForTables($table, $uid, '', FALSE);
 
