@@ -29,12 +29,7 @@
  * @package TYPO3
  * @subpackage vcc
  */
-class tx_vcc_hook_docHeaderButtonsHook {
-
-	/**
-	 * @var tx_vcc_service_communicationService|NULL
-	 */
-	protected $communicationService = NULL;
+class Tx_Vcc_Hook_ClearCacheIconHook extends Tx_Vcc_Hook_AbstractVarnishHook {
 
 	/**
 	 * @var template|NULL
@@ -47,58 +42,10 @@ class tx_vcc_hook_docHeaderButtonsHook {
 	protected $params = array();
 
 	/**
-	 * @var string
-	 */
-	protected $permsClause = '';
-
-	/**
-	 * @var tx_vcc_service_tsConfigService|NULL
-	 */
-	protected $tsConfigService = NULL;
-
-	/**
-	 * Initialize the object
-	 *
-	 * @return void
-	 */
-	public function __construct() {
-		$communicationService = t3lib_div::makeInstance('tx_vcc_service_communicationService');
-		$this->injectCommunicationService($communicationService);
-
-		$tsConfigService = t3lib_div::makeInstance('tx_vcc_service_tsConfigService');
-		$this->injectTsConfigService($tsConfigService);
-
-		$this->permsClause = $GLOBALS['BE_USER']->getPagePermsClause(2);
-	}
-
-	/**
-	 * Injects the communication service
-	 *
-	 * @param tx_vcc_service_communicationService $communicationService
-	 *
-	 * @return void
-	 */
-	public function injectCommunicationService(tx_vcc_service_communicationService $communicationService) {
-		$this->communicationService = $communicationService;
-	}
-
-	/**
-	 * Injects the TSConfig service
-	 *
-	 * @param tx_vcc_service_tsConfigService $tsConfigService
-	 *
-	 * @return void
-	 */
-	public function injectTsConfigService(tx_vcc_service_tsConfigService $tsConfigService) {
-		$this->tsConfigService = $tsConfigService;
-	}
-
-	/**
 	 * Checks access to the record and adds the clear cache button
 	 *
 	 * @param array $params
 	 * @param template $pObj
-	 *
 	 * @return void
 	 */
 	public function addButton($params, $pObj) {
@@ -145,7 +92,7 @@ class tx_vcc_hook_docHeaderButtonsHook {
 		}
 
 		if (isset($record['pid']) && $record['pid'] > 0) {
-			if ($this->isModuleAccessible($record['pid'], $table)) {
+			if ($this->isHookAccessible($record['pid'], $table)) {
 				// Process last request
 				$button = $this->process($table, $record['uid']);
 
@@ -167,8 +114,7 @@ class tx_vcc_hook_docHeaderButtonsHook {
 	/**
 	 * Returns the icon button on condition wrapped with a form
 	 *
-	 * @param boolean $wrapWithForm
-	 *
+	 * @param bool $wrapWithForm
 	 * @return string
 	 */
 	protected function generateButton($wrapWithForm = FALSE) {
@@ -187,35 +133,10 @@ class tx_vcc_hook_docHeaderButtonsHook {
 	}
 
 	/**
-	 * Checks if the button could be inserted
-	 *
-	 * @param integer $pageId
-	 * @param string $table
-	 *
-	 * @return boolean
-	 */
-	protected function isModuleAccessible($pageId, $table) {
-		$access = FALSE;
-
-		// Check edit rights for page as cache can be flushed then only
-		$pageinfo = t3lib_BEfunc::readPageAccess($pageId, $this->permsClause);
-		if ($pageinfo !== FALSE) {
-			// Get TSconfig for extension
-			$tsConfig = $this->tsConfigService->getConfiguration($pageId);
-			if (isset($tsConfig[$table]) && !empty($tsConfig[$table])) {
-				$access = TRUE;
-			}
-		}
-
-		return $access;
-	}
-
-	/**
 	 * Evaluate request and send clear cache commands
 	 *
 	 * @param string $table
-	 * @param integer $uid
-	 *
+	 * @param int $uid
 	 * @return string
 	 */
 	protected function process($table, $uid) {
@@ -229,8 +150,8 @@ class tx_vcc_hook_docHeaderButtonsHook {
 	}
 }
 
-if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Hook/DocHeaderButtonsHook.php']) {
-	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Hooks/DocHeaderButtonsHook.php']);
+if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Hook/Tx_Vcc_Hook_ClearCacheIcon.php']) {
+	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Hooks/Tx_Vcc_Hook_ClearCacheIcon.php']);
 }
 
 ?>

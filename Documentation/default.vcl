@@ -1,20 +1,12 @@
-﻿# This is a basic VCL configuration file for varnish.  See the vcl(7)
+﻿# This is a basic VCL configuration file for varnish. See the vcl(7)
 # man page for details on VCL syntax and semantics.
 #
-# Default backend definition.  Set this to point to your content
+# Default backend definition. Set this to point to your content
 # server.
 #
 backend default {
 	.host = "127.0.0.1";
 	.port = "80";
-
-	# Define health test
-	#.probe = {
-	#       .url = "/clear.gif";
-	#       .timeout = 1s;
-	#       .window = 5;
-	#       .threshold = 3;
-	#}
 }
 
 # Enable flushing access only to internals
@@ -35,11 +27,6 @@ sub vcl_recv {
 
 	# Allow the backend to deliver old content up to 1 day
 	set req.grace = 24h;
-	#if (req.backend.healthy) {
-	#	set req.grace = 30s;
-	#} else {
-	#	set req.grace = 24h;
-	#}
 
 	if (req.request != "GET" &&
 		req.request != "HEAD" &&
@@ -50,10 +37,14 @@ sub vcl_recv {
 		req.request != "DELETE") {
 
 		# Add BAN request for acl flushers
-		if (req.request == "BAN") {
+		if (req.request == "BAN" || req.request == "BANALL") {
 			if (client.ip ~ flushers) {
 				if (req.http.X-Host) {
-					ban("req.http.host == " + req.http.X-Host + " && req.url ~ " + req.url + "[/]?(\?.*)?$");
+					if (req.url != "/") {
+						ban("req.http.host ~ ^" + req.http.X-Host + "$ && req.url ~ ^" + req.url + "[/]?(\?.*)?$");
+					} else {
+						ban("req.http.host ~ ^" + req.http.X-Host + "$");
+					}
 					error 200 "OK";
 				} else {
 					error 400 "Bad Request";
@@ -67,14 +58,14 @@ sub vcl_recv {
 		}
 	}
 
+	# If we work in backend don't cache anything
+	if (req.http.Cookie ~ "be_typo_user") {
+		return (pipe);
+	}
+
 	# If neither GET nor HEAD request, send to backend but do not cached
 	# This means that POST requests are not cached
 	if (req.request != "GET" && req.request != "HEAD") {
-		return (pass);
-	}
-
-	# If we work in backend don't cache anything
-	if (req.http.Cookie ~ "be_typo_user") {
 		return (pass);
 	}
 
@@ -154,6 +145,9 @@ sub vcl_fetch {
 		return (hit_for_pass);
 	}
 
+	# Add additional information for acl flushers
+	set beresp.http.X-Host = req.http.Host;
+
 	return (deliver);
 }
 
@@ -163,6 +157,7 @@ sub vcl_deliver {
 	remove resp.http.Via;
 	remove resp.http.X-Powered-By;
 	remove resp.http.X-Varnish;
+	remove resp.http.X-Host;
 
 	return (deliver);
 }

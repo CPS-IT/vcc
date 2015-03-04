@@ -46,17 +46,6 @@ class tx_vcc_service_extensionSettingService implements t3lib_Singleton {
 	}
 
 	/**
-	 * Injects the logging service
-	 *
-	 * @param tx_vcc_service_loggingService $loggingService
-	 *
-	 * @return void
-	 */
-	public function injectLoggingService(tx_vcc_service_loggingService $loggingService) {
-		$this->loggingService = $loggingService;
-	}
-
-	/**
 	 * Returns the configuration
 	 *
 	 * @return array
