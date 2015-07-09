@@ -1,3 +1,6 @@
+2015-07-09         [RELEASE] Release of vcc 2.0.1 (Nicole Cordes)
+2015-07-09 f115bb3 [HOTFIX] Catch fatal errors during frontend initialization (Nicole Cordes)
+
 2015-03-04         [RELEASE] Release of vcc 2.0.0 (Nicole Cordes)
 2014-12-16 ca98f9a [BUGFIX] Prevent start url from stripping (Nicole Cordes)
 2014-12-16 88df44b [BUGFIX] Get correct page id for "pages" records (Nicole Cordes)
