@@ -301,7 +301,9 @@ class tx_vcc_service_communicationService implements t3lib_Singleton {
 		);
 		$this->loggingService->debug('CommunicationService::sendClearCacheCommandForTables arguments', $logData, $pid);
 
-		$this->createTSFE($pid);
+		if (!$this->createTSFE($pid)) {
+			return array();
+		}
 		$tsConfig = $this->tsConfigService->getConfiguration($pid);
 		$typolink = $tsConfig[$table . '.']['typolink.'];
 		$this->contentObject->data = $record;
@@ -355,7 +357,7 @@ class tx_vcc_service_communicationService implements t3lib_Singleton {
 	 * Load a faked frontend to be able to use stdWrap.typolink
 	 *
 	 * @param int $id
-	 * @return void
+	 * @return bool
 	 */
 	protected function createTSFE($id) {
 		if (!is_object($GLOBALS['TT'])) {
@@ -364,17 +366,25 @@ class tx_vcc_service_communicationService implements t3lib_Singleton {
 
 		$GLOBALS['TSFE'] = t3lib_div::makeInstance('tslib_fe', $GLOBALS['TYPO3_CONF_VARS'], $id, 0);
 		$GLOBALS['TSFE']->sys_page = t3lib_div::makeInstance('t3lib_pageSelect');
-		$GLOBALS['TSFE']->initTemplate();
-		$GLOBALS['TSFE']->getPageAndRootline();
-		//$GLOBALS['TSFE']->tmpl->start($GLOBALS['TSFE']->sys_page->getRootline($id));
-		$GLOBALS['TSFE']->getConfigArray();
-		if (TYPO3_MODE == 'BE') {
-			// Set current backend language
-			$GLOBALS['TSFE']->getPageRenderer()->setLanguage($GLOBALS['LANG']->lang);
-		}
-		$GLOBALS['TSFE']->newcObj();
+		try {
+			$GLOBALS['TSFE']->initTemplate();
+			$GLOBALS['TSFE']->getPageAndRootline();
+			$GLOBALS['TSFE']->getConfigArray();
+			//$GLOBALS['TSFE']->tmpl->start($GLOBALS['TSFE']->sys_page->getRootline($id));
+			if (TYPO3_MODE == 'BE') {
+				// Set current backend language
+				$GLOBALS['TSFE']->getPageRenderer()->setLanguage($GLOBALS['LANG']->lang);
+			}
+			$GLOBALS['TSFE']->newcObj();
 
-		TSpagegen::pagegenInit();
+			TSpagegen::pagegenInit();
+		} catch (\TYPO3\CMS\Core\Error\Http\PageNotFoundException $e) {
+			return FALSE;
+		} catch (\TYPO3\CMS\Core\Error\Http\ServiceUnavailableException $e) {
+			return FALSE;
+		}
+
+		return TRUE;
 	}
 
 	/**
