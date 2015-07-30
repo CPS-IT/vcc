@@ -1,3 +1,6 @@
+2015-07-30         [RELEASE] Release of vcc 2.0.2 (Nicole Cordes)
+2015-07-30 8d593b3 [HOTFIX] Get page access permissions according to table (Nicole Cordes)
+
 2015-07-09         [RELEASE] Release of vcc 2.0.1 (Nicole Cordes)
 2015-07-09 f115bb3 [HOTFIX] Catch fatal errors during frontend initialization (Nicole Cordes)
 
