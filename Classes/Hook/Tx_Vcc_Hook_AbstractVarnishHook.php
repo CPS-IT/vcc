@@ -37,11 +37,6 @@ abstract class Tx_Vcc_Hook_AbstractVarnishHook {
 	protected $communicationService = NULL;
 
 	/**
-	 * @var string
-	 */
-	protected $permsClause = '';
-
-	/**
 	 * @var tx_vcc_service_tsConfigService|NULL
 	 */
 	protected $tsConfigService = NULL;
@@ -55,8 +50,6 @@ abstract class Tx_Vcc_Hook_AbstractVarnishHook {
 
 		$tsConfigService = t3lib_div::makeInstance('tx_vcc_service_tsConfigService');
 		$this->injectTsConfigService($tsConfigService);
-
-		$this->permsClause = $GLOBALS['BE_USER']->getPagePermsClause(2);
 	}
 
 	/**
@@ -90,7 +83,12 @@ abstract class Tx_Vcc_Hook_AbstractVarnishHook {
 		$access = FALSE;
 
 		// Check edit rights for page as cache can be flushed then only
-		$pageinfo = t3lib_BEfunc::readPageAccess($pageId, $this->permsClause);
+		if ($table === 'pages') {
+			$permsClause = $GLOBALS['BE_USER']->getPagePermsClause(2);
+		} else {
+			$permsClause = $GLOBALS['BE_USER']->getPagePermsClause(16);
+		}
+		$pageinfo = t3lib_BEfunc::readPageAccess($pageId, $permsClause);
 		if ($pageinfo !== FALSE) {
 			// Get TSconfig for extension
 			$tsConfig = $this->tsConfigService->getConfiguration($pageId);
