@@ -1,5 +1,5 @@
 <?php
-$extensionPath = t3lib_extMgm::extPath('vcc') . 'Classes/';
+$extensionPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('vcc') . 'Classes/';
 
 return array(
 	'tx_vcc_hook_abstractvarnishhook' => $extensionPath . 'Hook/Tx_Vcc_Hook_AbstractVarnishHook.php',

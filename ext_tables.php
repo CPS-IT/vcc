@@ -5,12 +5,12 @@ if (!defined('TYPO3_MODE')) {
 
 // Register sprite icons
 $icons = array(
-	'clearVarnishCache' => t3lib_extMgm::extRelPath('vcc') . 'Resources/Public/Icons/CachePlugin.png',
+	'clearVarnishCache' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('vcc') . 'Resources/Public/Icons/CachePlugin.png',
 );
 t3lib_SpriteManager::addSingleIcons($icons, 'vcc');
 
 // Add default module settings
-t3lib_extMgm::addPageTSConfig('
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
 mod.vcc {
 	pages = 1
 	pages {
