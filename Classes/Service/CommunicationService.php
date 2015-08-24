@@ -150,7 +150,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 				$header = 'Server: ' . $result['server'] . ' // Host: ' . $result['host'];
 				$message = 'Request: ' . $result['request'];
 				switch ($result['status']) {
-					case t3lib_FlashMessage::OK:
+					case \TYPO3\CMS\Core\Messaging\FlashMessage::OK:
 						$content .= 'parent.TYPO3.Flashmessage.display(
 								TYPO3.Severity.ok,
 								"' . $header . '",
@@ -194,21 +194,21 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 				$header = 'Varnish Cache Control';
 				$message = 'Server: ' . $result['server'] . ' // Host: ' . $result['host'] . '<br />Request: ' . $result['request'];
 				switch ($result['status']) {
-					case t3lib_FlashMessage::OK:
+					case \TYPO3\CMS\Core\Messaging\FlashMessage::OK:
 						$flashMessage = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-							't3lib_FlashMessage',
+							\TYPO3\CMS\Core\Messaging\FlashMessage::class,
 							$message . '<br />Message: ' . $result['message'][0],
 							$header,
-							t3lib_FlashMessage::OK
+							\TYPO3\CMS\Core\Messaging\FlashMessage::OK
 						);
 						break;
 
 					default:
 						$flashMessage = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-							't3lib_FlashMessage',
+							\TYPO3\CMS\Core\Messaging\FlashMessage::class,
 							$message . '<br />Message: ' . implode('<br />', $result['message']) . '<br />Sent:<br />' . implode('<br />', $result['requestHeader']),
 							$header,
-							t3lib_FlashMessage::ERROR
+							\TYPO3\CMS\Core\Messaging\FlashMessage::ERROR
 						);
 						break;
 				}
@@ -346,7 +346,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 
 		return array(
 			array(
-				'status' => t3lib_FlashMessage::ERROR,
+				'status' => \TYPO3\CMS\Core\Messaging\FlashMessage::ERROR,
 				'message' => array('No valid URL was generated.', 'table: ' . $table, 'uid: ' . $uid, 'host: ' . $host),
 				'requestHeader' => array($url)
 			)
@@ -415,7 +415,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 			// Check for curl functions
 			if (!function_exists('curl_init')) {
 				// TODO: Implement fallback to file_get_contents()
-				$response['status'] = t3lib_FlashMessage::ERROR;
+				$response['status'] = \TYPO3\CMS\Core\Messaging\FlashMessage::ERROR;
 				$response['message'] = 'No curl_init available';
 			} else {
 				// If no host was given we need to loop over all
@@ -490,10 +490,10 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 
 					$header = curl_exec($ch);
 					if (!curl_error($ch)) {
-						$response['status'] = (curl_getinfo($ch, CURLINFO_HTTP_CODE) == 200) ? t3lib_FlashMessage::OK : t3lib_FlashMessage::ERROR;
+						$response['status'] = (curl_getinfo($ch, CURLINFO_HTTP_CODE) == 200) ? \TYPO3\CMS\Core\Messaging\FlashMessage::OK : \TYPO3\CMS\Core\Messaging\FlashMessage::ERROR;
 						$response['message'] = preg_split('/(\r|\n)+/m', trim($header));
 					} else {
-						$response['status'] = t3lib_FlashMessage::ERROR;
+						$response['status'] = \TYPO3\CMS\Core\Messaging\FlashMessage::ERROR;
 						$response['message'] = array(curl_error($ch));
 					}
 					$response['requestHeader'] = preg_split('/(\r|\n)+/m', trim(curl_getinfo($ch, CURLINFO_HEADER_OUT)));
@@ -514,7 +514,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 						'host' => $host,
 						'response' => $response
 					);
-					$logType = ($response['status'] == t3lib_FlashMessage::OK) ? tx_vcc_service_loggingService::OK : tx_vcc_service_loggingService::ERROR;
+					$logType = ($response['status'] == \TYPO3\CMS\Core\Messaging\FlashMessage::OK) ? tx_vcc_service_loggingService::OK : tx_vcc_service_loggingService::ERROR;
 					$this->loggingService->log('CommunicationService::processClearCacheCommand', $logData, $logType, $pid, 3);
 
 					$responseArray[] = $response;
