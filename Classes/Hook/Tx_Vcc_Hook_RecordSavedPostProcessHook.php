@@ -66,8 +66,4 @@ class Tx_Vcc_Hook_RecordSavedPostProcessHook extends Tx_Vcc_Hook_AbstractVarnish
 	}
 }
 
-if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Hook/Tx_Vcc_Hook_RecordSavedPostProcessHook.php']) {
-	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Hooks/Tx_Vcc_Hook_RecordSavedPostProcessHook.php']);
-}
-
 ?>

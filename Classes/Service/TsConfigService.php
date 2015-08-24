@@ -82,8 +82,4 @@ class tx_vcc_service_tsConfigService implements \TYPO3\CMS\Core\SingletonInterfa
 	}
 }
 
-if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Service/TsConfigService.php']) {
-	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Service/TsConfigService.php']);
-}
-
 ?>

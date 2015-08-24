@@ -539,8 +539,4 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 	}
 }
 
-if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Service/CommunicationService.php']) {
-	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Service/CommunicationService.php']);
-}
-
 ?>
