@@ -29,7 +29,7 @@
  * @package TYPO3
  * @subpackage vcc
  */
-class tx_vcc_service_tsConfigService implements t3lib_Singleton {
+class tx_vcc_service_tsConfigService implements \TYPO3\CMS\Core\SingletonInterface {
 
 	/**
 	 * @var array

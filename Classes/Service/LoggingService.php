@@ -29,7 +29,7 @@
  * @package TYPO3
  * @subpackage vcc
  */
-class tx_vcc_service_loggingService implements t3lib_Singleton {
+class tx_vcc_service_loggingService implements \TYPO3\CMS\Core\SingletonInterface {
 
 	const MODE_DISABLED = 0;
 	const MODE_MINIMAL = 1;
