@@ -32,7 +32,7 @@
 class Tx_Vcc_Hook_RecordSavedPostProcessHook extends Tx_Vcc_Hook_AbstractVarnishHook {
 
 	/**
-	 * @param t3lib_TCEmain $parentObject
+	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObject
 	 * @return void
 	 */
 	public function processDatamap_afterAllOperations(&$parentObject) {

@@ -33,7 +33,7 @@ class Tx_Vcc_Hook_ClearCachePostProcessHook extends Tx_Vcc_Hook_AbstractVarnishH
 
 	/**
 	 * @param array $params
-	 * @param t3lib_TCEmain $parentObject
+	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObject
 	 * @return void
 	 */
 	public function clearCacheByCommand($params, &$parentObject) {
