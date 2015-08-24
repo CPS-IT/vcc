@@ -373,7 +373,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 			}
 			$GLOBALS['TSFE']->newcObj();
 
-			TSpagegen::pagegenInit();
+			\TYPO3\CMS\Frontend\Page\PageGenerator::pagegenInit();
 		} catch (\TYPO3\CMS\Core\Error\Http\PageNotFoundException $e) {
 			return FALSE;
 		} catch (\TYPO3\CMS\Core\Error\Http\ServiceUnavailableException $e) {
