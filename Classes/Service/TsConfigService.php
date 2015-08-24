@@ -45,7 +45,7 @@ class tx_vcc_service_tsConfigService implements \TYPO3\CMS\Core\SingletonInterfa
 	 * Initialize the object
 	 */
 	public function __construct() {
-		$loggingService = t3lib_div::makeInstance('tx_vcc_service_loggingService');
+		$loggingService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_vcc_service_loggingService');
 		$this->injectLoggingService($loggingService);
 	}
 

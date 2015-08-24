@@ -45,7 +45,7 @@ class Tx_Vcc_Hook_ClearCachePostProcessHook extends Tx_Vcc_Hook_AbstractVarnishH
 				if (class_exists('t3lib_utility_Math')) {
 					$isInt = t3lib_utility_Math::canBeInterpretedAsInteger($params['cacheCmd']);
 				} else {
-					$isInt = t3lib_div::testInt($params['cacheCmd']);
+					$isInt = \TYPO3\CMS\Core\Utility\GeneralUtility::testInt($params['cacheCmd']);
 				}
 				if ($isInt) {
 					$resultArray = $this->communicationService->sendClearCacheCommandForTables('pages', (int) $params['cacheCmd']);

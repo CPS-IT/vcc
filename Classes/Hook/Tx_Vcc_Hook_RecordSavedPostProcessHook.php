@@ -50,7 +50,7 @@ class Tx_Vcc_Hook_RecordSavedPostProcessHook extends Tx_Vcc_Hook_AbstractVarnish
 				if ($this->communicationService->displayBackendMessage()) {
 					if (!isset($_POST['_saveandclosedok_x'])
 						&& !isset($_POST['_translation_savedok_x'])
-						&& t3lib_div::_GP('closeDoc') == 0
+						&& \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('closeDoc') == 0
 					) {
 						$this->attachResultArrayToPageRenderer(
 							'Tx_Vcc_Hook_RecordSavedPostProcessHook_processDatamap_afterAllOperations_' . $table . '_' . $uid,

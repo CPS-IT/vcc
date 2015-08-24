@@ -66,7 +66,7 @@ class tx_vcc_service_loggingService implements \TYPO3\CMS\Core\SingletonInterfac
 	 * Initialize the object
 	 */
 	public function __construct() {
-		$extensionSettingService = t3lib_div::makeInstance('tx_vcc_service_extensionSettingService');
+		$extensionSettingService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_vcc_service_extensionSettingService');
 		$this->injectExtensionSettingService($extensionSettingService);
 
 		$configuration = $this->extensionSettingService->getConfiguration();

@@ -65,17 +65,17 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 	 * Initialize the object
 	 */
 	public function __construct() {
-		$extensionSettingService = t3lib_div::makeInstance('tx_vcc_service_extensionSettingService');
+		$extensionSettingService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_vcc_service_extensionSettingService');
 		$this->injectExtensionSettingService($extensionSettingService);
 
-		$loggingService = t3lib_div::makeInstance('tx_vcc_service_loggingService');
+		$loggingService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_vcc_service_loggingService');
 		$this->injectLoggingService($loggingService);
 
-		$tsConfigService = t3lib_div::makeInstance('tx_vcc_service_tsConfigService');
+		$tsConfigService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_vcc_service_tsConfigService');
 		$this->injectTsConfigService($tsConfigService);
 
 		$this->configuration = $this->extensionSettingService->getConfiguration();
-		$this->contentObject = t3lib_div::makeInstance('tslib_cObj');
+		$this->contentObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tslib_cObj');
 
 		// Initialize hook objects
 		$this->initializeHookObjects();
@@ -117,7 +117,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 	protected function initializeHookObjects() {
 		if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vcc']['hooks']['communicationService'])) {
 			foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vcc']['hooks']['communicationService'] as $classReference) {
-				$hookObject = t3lib_div::getUserObj($classReference);
+				$hookObject = \TYPO3\CMS\Core\Utility\GeneralUtility::getUserObj($classReference);
 
 				// Hook objects have to implement interface
 				if ($hookObject instanceof tx_vcc_hook_communicationServiceHookInterface) {
@@ -195,7 +195,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 				$message = 'Server: ' . $result['server'] . ' // Host: ' . $result['host'] . '<br />Request: ' . $result['request'];
 				switch ($result['status']) {
 					case t3lib_FlashMessage::OK:
-						$flashMessage = t3lib_div::makeInstance(
+						$flashMessage = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
 							't3lib_FlashMessage',
 							$message . '<br />Message: ' . $result['message'][0],
 							$header,
@@ -204,7 +204,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 						break;
 
 					default:
-						$flashMessage = t3lib_div::makeInstance(
+						$flashMessage = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
 							't3lib_FlashMessage',
 							$message . '<br />Message: ' . implode('<br />', $result['message']) . '<br />Sent:<br />' . implode('<br />', $result['requestHeader']),
 							$header,
@@ -216,7 +216,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 				$flashMessage->setStoreInSession(TRUE);
 				if (class_exists('TYPO3\\CMS\\Core\\Messaging\\FlashMessageService')) {
 					/** @var $flashMessageService \TYPO3\CMS\Core\Messaging\FlashMessageService */
-					$flashMessageService = t3lib_div::makeInstance('TYPO3\\CMS\\Core\\Messaging\\FlashMessageService');
+					$flashMessageService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Messaging\\FlashMessageService');
 					/** @var $defaultFlashMessageQueue \TYPO3\CMS\Core\Messaging\FlashMessageQueue */
 					$defaultFlashMessageQueue = $flashMessageService->getMessageQueueByIdentifier();
 					$defaultFlashMessageQueue->enqueue($flashMessage);
@@ -361,11 +361,11 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 	 */
 	protected function createTSFE($id) {
 		if (!is_object($GLOBALS['TT'])) {
-			$GLOBALS['TT'] = t3lib_div::makeInstance('t3lib_TimeTrackNull');
+			$GLOBALS['TT'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_TimeTrackNull');
 		}
 
-		$GLOBALS['TSFE'] = t3lib_div::makeInstance('tslib_fe', $GLOBALS['TYPO3_CONF_VARS'], $id, 0);
-		$GLOBALS['TSFE']->sys_page = t3lib_div::makeInstance('t3lib_pageSelect');
+		$GLOBALS['TSFE'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tslib_fe', $GLOBALS['TYPO3_CONF_VARS'], $id, 0);
+		$GLOBALS['TSFE']->sys_page = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_pageSelect');
 		try {
 			$GLOBALS['TSFE']->initTemplate();
 			$GLOBALS['TSFE']->getPageAndRootline();
@@ -399,7 +399,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 	protected function processClearCacheCommand($url, $pid, $host = '', $quote = TRUE) {
 		$responseArray = array();
 
-		$serverArray = t3lib_div::trimExplode(',', $this->configuration['server'], 1);
+		$serverArray = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $this->configuration['server'], 1);
 		foreach ($serverArray as $server) {
 			$response = array(
 				'server' => $server
@@ -421,7 +421,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 				// If no host was given we need to loop over all
 				$hostArray = array();
 				if ($host !== '') {
-					$hostArray = t3lib_div::trimExplode(',', $host, 1);
+					$hostArray = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $host, 1);
 				} else {
 					// Get all (non-redirecting) domains from root
 					$rootLine = t3lib_BEfunc::BEgetRootLine($pid);
@@ -439,7 +439,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 
 				// Fallback to current server
 				if (empty($hostArray)) {
-					$domain = rtrim(t3lib_div::getIndpEnv('TYPO3_SITE_URL'), '/');
+					$domain = rtrim(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('TYPO3_SITE_URL'), '/');
 					$hostArray[] = substr($domain, strpos($domain, '://') + 3);
 				}
 

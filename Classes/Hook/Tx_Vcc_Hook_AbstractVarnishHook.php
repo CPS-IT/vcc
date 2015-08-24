@@ -45,10 +45,10 @@ abstract class Tx_Vcc_Hook_AbstractVarnishHook {
 	 * Initialize the object
 	 */
 	public function __construct() {
-		$communicationService = t3lib_div::makeInstance('tx_vcc_service_communicationService');
+		$communicationService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_vcc_service_communicationService');
 		$this->injectCommunicationService($communicationService);
 
-		$tsConfigService = t3lib_div::makeInstance('tx_vcc_service_tsConfigService');
+		$tsConfigService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_vcc_service_tsConfigService');
 		$this->injectTsConfigService($tsConfigService);
 	}
 
@@ -108,7 +108,7 @@ abstract class Tx_Vcc_Hook_AbstractVarnishHook {
 	protected function attachResultArrayToPageRenderer($name, $resultArray) {
 		$message = $this->communicationService->generateBackendMessage($resultArray, FALSE);
 		/** @var t3lib_PageRenderer $pageRenderer */
-		$pageRenderer = t3lib_div::makeInstance('t3lib_PageRenderer');
+		$pageRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_PageRenderer');
 		$pageRenderer->addJsInlineCode($name, $message);
 	}
 }

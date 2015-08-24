@@ -57,7 +57,7 @@ class Tx_Vcc_Hook_ClearCacheIconHook extends Tx_Vcc_Hook_AbstractVarnishHook {
 
 		// For web -> page view or web -> list view
 		if ($this->pObj->scriptID === 'ext/cms/layout/db_layout.php' || $this->pObj->scriptID === 'ext/recordlist/mod1/index.php') {
-			$id = t3lib_div::_GP('id');
+			$id = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('id');
 			if (is_object($GLOBALS['SOBE']) && $GLOBALS['SOBE']->current_sys_language) {
 				$table = 'pages_language_overlay';
 				$record = t3lib_BEfunc::getRecordsByField($table, 'pid', $id, ' AND ' . $table . '.sys_language_uid=' . intval($GLOBALS['SOBE']->current_sys_language), '', '', '1');
@@ -72,7 +72,7 @@ class Tx_Vcc_Hook_ClearCacheIconHook extends Tx_Vcc_Hook_AbstractVarnishHook {
 				);
 			}
 		} elseif ($this->pObj->scriptID === 'typo3/alt_doc.php') { // For record edit
-			$editConf = t3lib_div::_GP('edit');
+			$editConf = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('edit');
 			if (is_array($editConf) && !empty($editConf)) {
 				// Finding the current table
 				reset($editConf);
@@ -121,7 +121,7 @@ class Tx_Vcc_Hook_ClearCacheIconHook extends Tx_Vcc_Hook_AbstractVarnishHook {
 		$html = '<input type="image" class="c-inputButton" name="_clearvarnishcache" src="clear.gif" title="Clear Varnish cache" />';
 
 		if ($wrapWithForm) {
-			$html = '<form action="' . t3lib_div::getindpenv('REQUEST_URI') . '" method="post">' . $html . '</form>';
+			$html = '<form action="' . \TYPO3\CMS\Core\Utility\GeneralUtility::getindpenv('REQUEST_URI') . '" method="post">' . $html . '</form>';
 		}
 
 		return t3lib_iconWorks::getSpriteIcon(
