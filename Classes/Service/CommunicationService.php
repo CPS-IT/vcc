@@ -32,7 +32,7 @@
 class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonInterface {
 
 	/**
-	 * @var tslib_cObj|NULL
+	 * @var \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer|NULL
 	 */
 	protected $contentObject = NULL;
 
@@ -75,7 +75,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 		$this->injectTsConfigService($tsConfigService);
 
 		$this->configuration = $this->extensionSettingService->getConfiguration();
-		$this->contentObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tslib_cObj');
+		$this->contentObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class);
 
 		// Initialize hook objects
 		$this->initializeHookObjects();
