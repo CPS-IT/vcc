@@ -60,7 +60,7 @@ class Tx_Vcc_Hook_ClearCacheIconHook extends Tx_Vcc_Hook_AbstractVarnishHook {
 			$id = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('id');
 			if (is_object($GLOBALS['SOBE']) && $GLOBALS['SOBE']->current_sys_language) {
 				$table = 'pages_language_overlay';
-				$record = t3lib_BEfunc::getRecordsByField($table, 'pid', $id, ' AND ' . $table . '.sys_language_uid=' . intval($GLOBALS['SOBE']->current_sys_language), '', '', '1');
+				$record = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordsByField($table, 'pid', $id, ' AND ' . $table . '.sys_language_uid=' . intval($GLOBALS['SOBE']->current_sys_language), '', '', '1');
 				if (is_array($record) && !empty($record)) {
 					$record = $record[0];
 				}
@@ -86,7 +86,7 @@ class Tx_Vcc_Hook_ClearCacheIconHook extends Tx_Vcc_Hook_AbstractVarnishHook {
 					$record['uid'] = $recordUid;
 					$record['pid'] = $recordUid;
 				} else {
-					$record = t3lib_BEfunc::getRecord($table, $recordUid, 'uid, pid');
+					$record = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord($table, $recordUid, 'uid, pid');
 				}
 			}
 		}

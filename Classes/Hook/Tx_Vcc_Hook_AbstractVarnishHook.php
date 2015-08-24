@@ -88,7 +88,7 @@ abstract class Tx_Vcc_Hook_AbstractVarnishHook {
 		} else {
 			$permsClause = $GLOBALS['BE_USER']->getPagePermsClause(16);
 		}
-		$pageinfo = t3lib_BEfunc::readPageAccess($pageId, $permsClause);
+		$pageinfo = \TYPO3\CMS\Backend\Utility\BackendUtility::readPageAccess($pageId, $permsClause);
 		if ($pageinfo !== FALSE) {
 			// Get TSconfig for extension
 			$tsConfig = $this->tsConfigService->getConfiguration($pageId);

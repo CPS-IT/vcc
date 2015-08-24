@@ -247,11 +247,11 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 			$hostArray = array();
 
 			// Get all domain records and check page access
-			$domainArray = t3lib_BEfunc::getRecordsByField('sys_domain', 'redirectTo', '', ' AND hidden=0');
+			$domainArray = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordsByField('sys_domain', 'redirectTo', '', ' AND hidden=0');
 			if (is_array($domainArray) && !empty($domainArray)) {
 				$permsClause = $GLOBALS['BE_USER']->getPagePermsClause(2);
 				foreach ($domainArray as $domain) {
-					$pageinfo = t3lib_BEfunc::readPageAccess($domain['pid'], $permsClause);
+					$pageinfo = \TYPO3\CMS\Backend\Utility\BackendUtility::readPageAccess($domain['pid'], $permsClause);
 					if ($pageinfo !== FALSE) {
 						$hostArray[] = $domain['domainName'];
 					}
@@ -279,7 +279,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 	 */
 	public function sendClearCacheCommandForTables($table, $uid, $host = '', $quote = TRUE) {
 		// Get current record to process
-		$record = t3lib_BEfunc::getRecord($table, $uid);
+		$record = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord($table, $uid);
 
 		// Build request
 		if ($table === 'pages') {
@@ -309,7 +309,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 
 		// Check for root site
 		if ($url === '' && $table === 'pages') {
-			$rootline = t3lib_BEfunc::BEgetRootLine($uid);
+			$rootline = \TYPO3\CMS\Backend\Utility\BackendUtility::BEgetRootLine($uid);
 			if (is_array($rootline) && count($rootline) > 1) {
 				// If uid equals the site root we have to process
 				if ($uid == $rootline[1]['uid']) {
@@ -420,9 +420,9 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 					$hostArray = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $host, 1);
 				} else {
 					// Get all (non-redirecting) domains from root
-					$rootLine = t3lib_BEfunc::BEgetRootLine($pid);
+					$rootLine = \TYPO3\CMS\Backend\Utility\BackendUtility::BEgetRootLine($pid);
 					foreach ($rootLine as $row) {
-						$domainArray = t3lib_BEfunc::getRecordsByField('sys_domain', 'pid', $row['uid'], ' AND redirectTo="" AND hidden=0');
+						$domainArray = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordsByField('sys_domain', 'pid', $row['uid'], ' AND redirectTo="" AND hidden=0');
 						if (is_array($domainArray) && !empty($domainArray)) {
 							foreach ($domainArray as $domain) {
 								$hostArray[] = $domain['domainName'];

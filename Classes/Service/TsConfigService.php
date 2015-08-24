@@ -67,7 +67,7 @@ class tx_vcc_service_tsConfigService implements \TYPO3\CMS\Core\SingletonInterfa
 	 */
 	public function getConfiguration($id) {
 		if (!isset($this->configurationArray[$id])) {
-			$modTsConfig = t3lib_BEfunc::getModTSconfig($id, 'mod.vcc');
+			$modTsConfig = \TYPO3\CMS\Backend\Utility\BackendUtility::getModTSconfig($id, 'mod.vcc');
 			$this->configurationArray[$id] = $modTsConfig['properties'];
 
 			// Log debug information
