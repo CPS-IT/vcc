@@ -124,7 +124,7 @@ class Tx_Vcc_Hook_ClearCacheIconHook extends Tx_Vcc_Hook_AbstractVarnishHook {
 			$html = '<form action="' . \TYPO3\CMS\Core\Utility\GeneralUtility::getindpenv('REQUEST_URI') . '" method="post">' . $html . '</form>';
 		}
 
-		return t3lib_iconWorks::getSpriteIcon(
+		return \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon(
 			'extensions-vcc-clearVarnishCache',
 			array(
 				'html' => $html
