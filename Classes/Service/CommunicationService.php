@@ -361,7 +361,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 		}
 
 		$GLOBALS['TSFE'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController::class, $GLOBALS['TYPO3_CONF_VARS'], $id, 0);
-		$GLOBALS['TSFE']->sys_page = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_pageSelect');
+		$GLOBALS['TSFE']->sys_page = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\Page\PageRepository::class);
 		try {
 			$GLOBALS['TSFE']->initTemplate();
 			$GLOBALS['TSFE']->getPageAndRootline();
