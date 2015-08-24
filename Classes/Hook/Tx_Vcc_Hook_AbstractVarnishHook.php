@@ -107,8 +107,8 @@ abstract class Tx_Vcc_Hook_AbstractVarnishHook {
 	 */
 	protected function attachResultArrayToPageRenderer($name, $resultArray) {
 		$message = $this->communicationService->generateBackendMessage($resultArray, FALSE);
-		/** @var t3lib_PageRenderer $pageRenderer */
-		$pageRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_PageRenderer');
+		/** @var \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer */
+		$pageRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Page\PageRenderer::class);
 		$pageRenderer->addJsInlineCode($name, $message);
 	}
 }
