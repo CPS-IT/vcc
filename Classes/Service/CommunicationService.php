@@ -357,7 +357,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 	 */
 	protected function createTSFE($id) {
 		if (!is_object($GLOBALS['TT'])) {
-			$GLOBALS['TT'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_TimeTrackNull');
+			$GLOBALS['TT'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\TimeTracker\NullTimeTracker::class);
 		}
 
 		$GLOBALS['TSFE'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController::class, $GLOBALS['TYPO3_CONF_VARS'], $id, 0);
