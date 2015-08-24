@@ -105,8 +105,8 @@ class Tx_Vcc_Hook_ClearCacheIconHook extends Tx_Vcc_Hook_AbstractVarnishHook {
 
 				// Add button to button list and extend layout
 				$this->params['buttons']['vcc'] = $button;
-				$buttonWrap = t3lib_parsehtml::getSubpart($pObj->moduleTemplate, '###BUTTON_GROUP_WRAP###');
-				$this->params['markers']['BUTTONLIST_LEFT'] .= t3lib_parsehtml::substituteMarker($buttonWrap, '###BUTTONS###', trim($button));
+				$buttonWrap = \TYPO3\CMS\Core\Html\HtmlParser::getSubpart($pObj->moduleTemplate, '###BUTTON_GROUP_WRAP###');
+				$this->params['markers']['BUTTONLIST_LEFT'] .= \TYPO3\CMS\Core\Html\HtmlParser::substituteMarker($buttonWrap, '###BUTTONS###', trim($button));
 			}
 		}
 	}
