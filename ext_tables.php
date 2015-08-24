@@ -7,7 +7,7 @@ if (!defined('TYPO3_MODE')) {
 $icons = array(
 	'clearVarnishCache' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('vcc') . 'Resources/Public/Icons/CachePlugin.png',
 );
-t3lib_SpriteManager::addSingleIcons($icons, 'vcc');
+\TYPO3\CMS\Backend\Sprite\SpriteManager::addSingleIcons($icons, 'vcc');
 
 // Add default module settings
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
