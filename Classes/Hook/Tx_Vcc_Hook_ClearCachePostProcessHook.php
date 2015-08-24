@@ -41,15 +41,8 @@ class Tx_Vcc_Hook_ClearCachePostProcessHook extends Tx_Vcc_Hook_AbstractVarnishH
 			$resultArray = array();
 			if (in_array(strtolower($params['cacheCmd']), array('all', 'pages'))) {
 				$resultArray = $this->communicationService->sendClearCacheCommandForFiles('');
-			} else {
-				if (class_exists('t3lib_utility_Math')) {
-					$isInt = t3lib_utility_Math::canBeInterpretedAsInteger($params['cacheCmd']);
-				} else {
-					$isInt = \TYPO3\CMS\Core\Utility\GeneralUtility::testInt($params['cacheCmd']);
-				}
-				if ($isInt) {
-					$resultArray = $this->communicationService->sendClearCacheCommandForTables('pages', (int) $params['cacheCmd']);
-				}
+			} elseif (\TYPO3\CMS\Core\Utility\MathUtility::canBeInterpretedAsInteger($params['cacheCmd'])) {
+				$resultArray = $this->communicationService->sendClearCacheCommandForTables('pages', (int) $params['cacheCmd']);
 			}
 			if ($this->communicationService->displayBackendMessage()) {
 				$this->attachResultArrayToPageRenderer(

@@ -214,15 +214,11 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 				}
 
 				$flashMessage->setStoreInSession(TRUE);
-				if (class_exists('TYPO3\\CMS\\Core\\Messaging\\FlashMessageService')) {
-					/** @var $flashMessageService \TYPO3\CMS\Core\Messaging\FlashMessageService */
-					$flashMessageService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Messaging\\FlashMessageService');
-					/** @var $defaultFlashMessageQueue \TYPO3\CMS\Core\Messaging\FlashMessageQueue */
-					$defaultFlashMessageQueue = $flashMessageService->getMessageQueueByIdentifier();
-					$defaultFlashMessageQueue->enqueue($flashMessage);
-				} else {
-					t3lib_FlashMessageQueue::addMessage($flashMessage);
-				}
+				/** @var $flashMessageService \TYPO3\CMS\Core\Messaging\FlashMessageService */
+				$flashMessageService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Messaging\\FlashMessageService');
+				/** @var $defaultFlashMessageQueue \TYPO3\CMS\Core\Messaging\FlashMessageQueue */
+				$defaultFlashMessageQueue = $flashMessageService->getMessageQueueByIdentifier();
+				$defaultFlashMessageQueue->enqueue($flashMessage);
 			}
 			unset($result);
 		}
