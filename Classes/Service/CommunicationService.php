@@ -387,12 +387,12 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 	 * Processes the CURL request and sends action to Varnish server
 	 *
 	 * @param string $url
-	 * @param int $pid
+	 * @param int $pageId
 	 * @param string $host
 	 * @param bool $quote
 	 * @return array
 	 */
-	protected function processClearCacheCommand($url, $pid, $host = '', $quote = TRUE) {
+	protected function processClearCacheCommand($url, $pageId, $host = '', $quote = TRUE) {
 		$responseArray = array();
 
 		$serverArray = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $this->configuration['server'], 1);
@@ -420,7 +420,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 					$hostArray = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $host, 1);
 				} else {
 					// Get all (non-redirecting) domains from root
-					$rootLine = \TYPO3\CMS\Backend\Utility\BackendUtility::BEgetRootLine($pid);
+					$rootLine = \TYPO3\CMS\Backend\Utility\BackendUtility::BEgetRootLine($pageId);
 					foreach ($rootLine as $row) {
 						$domainArray = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordsByField('sys_domain', 'pid', $row['uid'], ' AND redirectTo="" AND hidden=0');
 						if (is_array($domainArray) && !empty($domainArray)) {
@@ -473,7 +473,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 					// Include preProcess hook (e.g. to set some alternative curl options
 					$params = array(
 						'host' => $xHost,
-						'pid' => $pid,
+						'pageId' => $pageId,
 						'quote' => $quote,
 						'server' => $server,
 						'url' => $url,
@@ -506,12 +506,12 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 					// Log debug information
 					$logData = array(
 						'url' => $url,
-						'pid' => $pid,
+						'pageId' => $pageId,
 						'host' => $host,
 						'response' => $response
 					);
 					$logType = ($response['status'] == \TYPO3\CMS\Core\Messaging\FlashMessage::OK) ? tx_vcc_service_loggingService::OK : tx_vcc_service_loggingService::ERROR;
-					$this->loggingService->log('CommunicationService::processClearCacheCommand', $logData, $logType, $pid, 3);
+					$this->loggingService->log('CommunicationService::processClearCacheCommand', $logData, $logType, $pageId, 3);
 
 					$responseArray[] = $response;
 				}
