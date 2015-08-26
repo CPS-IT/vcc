@@ -1,4 +1,6 @@
 <?php
+namespace CPSIT\Vcc\Hooks;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -22,6 +24,12 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use CPSIT\Vcc\Service\CommunicationService;
+use CPSIT\Vcc\Service\TsConfigService;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * Adds the cache clear button to the edit form
  *
@@ -29,15 +37,15 @@
  * @package TYPO3
  * @subpackage vcc
  */
-abstract class Tx_Vcc_Hook_AbstractVarnishHook {
+abstract class AbstractVarnishHook {
 
 	/**
-	 * @var tx_vcc_service_communicationService|NULL
+	 * @var CommunicationService|NULL
 	 */
 	protected $communicationService = NULL;
 
 	/**
-	 * @var tx_vcc_service_tsConfigService|NULL
+	 * @var TsConfigService|NULL
 	 */
 	protected $tsConfigService = NULL;
 
@@ -45,30 +53,30 @@ abstract class Tx_Vcc_Hook_AbstractVarnishHook {
 	 * Initialize the object
 	 */
 	public function __construct() {
-		$communicationService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_vcc_service_communicationService');
+		$communicationService = GeneralUtility::makeInstance(CommunicationService::class);
 		$this->injectCommunicationService($communicationService);
 
-		$tsConfigService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_vcc_service_tsConfigService');
+		$tsConfigService = GeneralUtility::makeInstance(TsConfigService::class);
 		$this->injectTsConfigService($tsConfigService);
 	}
 
 	/**
 	 * Injects the communication service
 	 *
-	 * @param tx_vcc_service_communicationService $communicationService
+	 * @param \CPSIT\Vcc\Service\CommunicationService $communicationService
 	 * @return void
 	 */
-	protected function injectCommunicationService(tx_vcc_service_communicationService $communicationService) {
+	protected function injectCommunicationService(CommunicationService $communicationService) {
 		$this->communicationService = $communicationService;
 	}
 
 	/**
 	 * Injects the TSConfig service
 	 *
-	 * @param tx_vcc_service_tsConfigService $tsConfigService
+	 * @param \CPSIT\Vcc\Service\TsConfigService $tsConfigService
 	 * @return void
 	 */
-	protected function injectTsConfigService(tx_vcc_service_tsConfigService $tsConfigService) {
+	protected function injectTsConfigService(TsConfigService $tsConfigService) {
 		$this->tsConfigService = $tsConfigService;
 	}
 
@@ -88,7 +96,7 @@ abstract class Tx_Vcc_Hook_AbstractVarnishHook {
 		} else {
 			$permsClause = $GLOBALS['BE_USER']->getPagePermsClause(16);
 		}
-		$pageinfo = \TYPO3\CMS\Backend\Utility\BackendUtility::readPageAccess($pageId, $permsClause);
+		$pageinfo = BackendUtility::readPageAccess($pageId, $permsClause);
 		if ($pageinfo !== FALSE) {
 			// Get TSconfig for extension
 			$tsConfig = $this->tsConfigService->getConfiguration($pageId);
@@ -108,7 +116,7 @@ abstract class Tx_Vcc_Hook_AbstractVarnishHook {
 	protected function attachResultArrayToPageRenderer($name, $resultArray) {
 		$message = $this->communicationService->generateBackendMessage($resultArray, FALSE);
 		/** @var \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer */
-		$pageRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Page\PageRenderer::class);
+		$pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
 		$pageRenderer->addJsInlineCode($name, $message);
 	}
 }

@@ -1,4 +1,6 @@
 <?php
+namespace CPSIT\Vcc\Hooks;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -22,6 +24,8 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * Clears caches after a record was saved
  *
@@ -29,28 +33,40 @@
  * @package TYPO3
  * @subpackage vcc
  */
-class Tx_Vcc_Hook_ClearCachePostProcessHook extends Tx_Vcc_Hook_AbstractVarnishHook {
+class RecordSavedPostProcessHook extends AbstractVarnishHook {
 
 	/**
-	 * @param array $params
 	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObject
 	 * @return void
 	 */
-	public function clearCacheByCommand($params, &$parentObject) {
-		if (!empty($params['cacheCmd'])) {
-			$resultArray = array();
-			if (in_array(strtolower($params['cacheCmd']), array('all', 'pages'))) {
-				$resultArray = $this->communicationService->sendClearCacheCommandForFiles('');
-			} elseif (\TYPO3\CMS\Core\Utility\MathUtility::canBeInterpretedAsInteger($params['cacheCmd'])) {
-				$resultArray = $this->communicationService->sendClearCacheCommandForTables('pages', (int) $params['cacheCmd']);
+	public function processDatamap_afterAllOperations(&$parentObject) {
+		foreach ($parentObject->datamap as $table => $record) {
+			$uid = key($record);
+			$uid = isset($parentObject->substNEWwithIDs[$uid]) ? $parentObject->substNEWwithIDs[$uid] : $uid;
+			if ($table === 'pages') {
+				$pageId = $uid;
+			} else {
+				$pageId = $parentObject->getPID($table, $uid);
 			}
-			if ($this->communicationService->displayBackendMessage()) {
-				$this->attachResultArrayToPageRenderer(
-					'Tx_Vcc_Hook_ClearCachePostProcessHook_clearCacheByCommand_' . $params['cacheCmd'],
-					$resultArray
-				);
+			if ($this->isHookAccessible($pageId, $table)) {
+				$resultArray = $this->communicationService->sendClearCacheCommandForTables($table, $uid, '', FALSE);
+
+				if ($this->communicationService->displayBackendMessage()) {
+					if (!isset($_POST['_saveandclosedok_x'])
+						&& !isset($_POST['_translation_savedok_x'])
+						&& GeneralUtility::_GP('closeDoc') == 0
+					) {
+						$this->attachResultArrayToPageRenderer(
+							'RecordSavedPostProcessHook_processDatamap_afterAllOperations_' . $table . '_' . $uid,
+							$resultArray
+						);
+					} else {
+						$this->communicationService->storeBackendMessage($resultArray);
+					}
+				}
 			}
 		}
+		unset($table, $record);
 	}
 }
 

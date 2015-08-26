@@ -1,4 +1,6 @@
 <?php
+namespace CPSIT\Vcc\Service;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -22,6 +24,16 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Messaging;
+use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\TimeTracker\NullTimeTracker;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+use TYPO3\CMS\Frontend\Page;
+use TYPO3\CMS\Core\Error\Http;
+
 /**
  * Service to send the cache command to server
  *
@@ -29,10 +41,10 @@
  * @package TYPO3
  * @subpackage vcc
  */
-class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonInterface {
+class CommunicationService implements SingletonInterface {
 
 	/**
-	 * @var \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer|NULL
+	 * @var ContentObjectRenderer|NULL
 	 */
 	protected $contentObject = NULL;
 
@@ -42,7 +54,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 	protected $configuration = array();
 
 	/**
-	 * @var tx_vcc_service_extensionSettingService|NULL
+	 * @var ExtensionSettingService|NULL
 	 */
 	protected $extensionSettingService = NULL;
 
@@ -52,12 +64,12 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 	protected $hookObjects = array();
 
 	/**
-	 * @var tx_vcc_service_loggingService|NULL
+	 * @var LoggingService|NULL
 	 */
 	protected $loggingService = NULL;
 
 	/**
-	 * @var tx_vcc_service_tsConfigService|NULL
+	 * @var TsConfigService|NULL
 	 */
 	protected $tsConfigService = NULL;
 
@@ -65,17 +77,17 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 	 * Initialize the object
 	 */
 	public function __construct() {
-		$extensionSettingService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_vcc_service_extensionSettingService');
+		$extensionSettingService = GeneralUtility::makeInstance(ExtensionSettingService::class);
 		$this->injectExtensionSettingService($extensionSettingService);
 
-		$loggingService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_vcc_service_loggingService');
+		$loggingService = GeneralUtility::makeInstance(LoggingService::class);
 		$this->injectLoggingService($loggingService);
 
-		$tsConfigService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_vcc_service_tsConfigService');
+		$tsConfigService = GeneralUtility::makeInstance(TsConfigService::class);
 		$this->injectTsConfigService($tsConfigService);
 
 		$this->configuration = $this->extensionSettingService->getConfiguration();
-		$this->contentObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class);
+		$this->contentObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);
 
 		// Initialize hook objects
 		$this->initializeHookObjects();
@@ -84,30 +96,30 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 	/**
 	 * Injects the extension setting service
 	 *
-	 * @param tx_vcc_service_extensionSettingService $extensionSettingService
+	 * @param \CPSIT\Vcc\Service\ExtensionSettingService $extensionSettingService
 	 * @return void
 	 */
-	public function injectExtensionSettingService(tx_vcc_service_extensionSettingService $extensionSettingService) {
+	public function injectExtensionSettingService(ExtensionSettingService $extensionSettingService) {
 		$this->extensionSettingService = $extensionSettingService;
 	}
 
 	/**
 	 * Injects the logging service
 	 *
-	 * @param tx_vcc_service_loggingService $loggingService
+	 * @param \CPSIT\Vcc\Service\LoggingService $loggingService
 	 * @return void
 	 */
-	public function injectLoggingService(tx_vcc_service_loggingService $loggingService) {
+	public function injectLoggingService(LoggingService $loggingService) {
 		$this->loggingService = $loggingService;
 	}
 
 	/**
 	 * Injects the TSConfig service
 	 *
-	 * @param tx_vcc_service_tsConfigService $tsConfigService
+	 * @param \CPSIT\Vcc\Service\TsConfigService $tsConfigService
 	 * @return void
 	 */
-	public function injectTsConfigService(tx_vcc_service_tsConfigService $tsConfigService) {
+	public function injectTsConfigService(TsConfigService $tsConfigService) {
 		$this->tsConfigService = $tsConfigService;
 	}
 
@@ -117,10 +129,10 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 	protected function initializeHookObjects() {
 		if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vcc']['hooks']['communicationService'])) {
 			foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vcc']['hooks']['communicationService'] as $classReference) {
-				$hookObject = \TYPO3\CMS\Core\Utility\GeneralUtility::getUserObj($classReference);
+				$hookObject = GeneralUtility::getUserObj($classReference);
 
 				// Hook objects have to implement interface
-				if ($hookObject instanceof tx_vcc_hook_communicationServiceHookInterface) {
+				if ($hookObject instanceof CommunicationServiceHookInterface) {
 					$this->hookObjects[] = $hookObject;
 				}
 			}
@@ -132,7 +144,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 	 * @return bool
 	 */
 	public function displayBackendMessage() {
-		return ($this->configuration['loggingMode'] & tx_vcc_service_loggingService::MODE_DEBUG || $this->configuration['cacheControl'] === 'manual');
+		return ($this->configuration['loggingMode'] & LoggingService::MODE_DEBUG || $this->configuration['cacheControl'] === 'manual');
 	}
 
 	/**
@@ -150,7 +162,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 				$header = 'Server: ' . $result['server'] . ' // Host: ' . $result['host'];
 				$message = 'Request: ' . $result['request'];
 				switch ($result['status']) {
-					case \TYPO3\CMS\Core\Messaging\FlashMessage::OK:
+					case Messaging\FlashMessage::OK:
 						$content .= 'parent.TYPO3.Flashmessage.display(
 								TYPO3.Severity.ok,
 								"' . $header . '",
@@ -194,29 +206,29 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 				$header = 'Varnish Cache Control';
 				$message = 'Server: ' . $result['server'] . ' // Host: ' . $result['host'] . '<br />Request: ' . $result['request'];
 				switch ($result['status']) {
-					case \TYPO3\CMS\Core\Messaging\FlashMessage::OK:
-						$flashMessage = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-							\TYPO3\CMS\Core\Messaging\FlashMessage::class,
+					case Messaging\FlashMessage::OK:
+						$flashMessage = GeneralUtility::makeInstance(
+							Messaging\FlashMessage::class,
 							$message . '<br />Message: ' . $result['message'][0],
 							$header,
-							\TYPO3\CMS\Core\Messaging\FlashMessage::OK
+							Messaging\FlashMessage::OK
 						);
 						break;
 
 					default:
-						$flashMessage = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-							\TYPO3\CMS\Core\Messaging\FlashMessage::class,
+						$flashMessage = GeneralUtility::makeInstance(
+							Messaging\FlashMessage::class,
 							$message . '<br />Message: ' . implode('<br />', $result['message']) . '<br />Sent:<br />' . implode('<br />', $result['requestHeader']),
 							$header,
-							\TYPO3\CMS\Core\Messaging\FlashMessage::ERROR
+							Messaging\FlashMessage::ERROR
 						);
 						break;
 				}
 
 				$flashMessage->setStoreInSession(TRUE);
-				/** @var $flashMessageService \TYPO3\CMS\Core\Messaging\FlashMessageService */
-				$flashMessageService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Messaging\\FlashMessageService');
-				/** @var $defaultFlashMessageQueue \TYPO3\CMS\Core\Messaging\FlashMessageQueue */
+				/** @var $flashMessageService Messaging\FlashMessageService */
+				$flashMessageService = GeneralUtility::makeInstance(Messaging\FlashMessageService::class);
+				/** @var $defaultFlashMessageQueue Messaging\FlashMessageQueue */
 				$defaultFlashMessageQueue = $flashMessageService->getMessageQueueByIdentifier();
 				$defaultFlashMessageQueue->enqueue($flashMessage);
 			}
@@ -247,11 +259,11 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 			$hostArray = array();
 
 			// Get all domain records and check page access
-			$domainArray = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordsByField('sys_domain', 'redirectTo', '', ' AND hidden=0');
+			$domainArray = BackendUtility::getRecordsByField('sys_domain', 'redirectTo', '', ' AND hidden=0');
 			if (is_array($domainArray) && !empty($domainArray)) {
 				$permsClause = $GLOBALS['BE_USER']->getPagePermsClause(2);
 				foreach ($domainArray as $domain) {
-					$pageinfo = \TYPO3\CMS\Backend\Utility\BackendUtility::readPageAccess($domain['pid'], $permsClause);
+					$pageinfo = BackendUtility::readPageAccess($domain['pid'], $permsClause);
 					if ($pageinfo !== FALSE) {
 						$hostArray[] = $domain['domainName'];
 					}
@@ -279,7 +291,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 	 */
 	public function sendClearCacheCommandForTables($table, $uid, $host = '', $quote = TRUE) {
 		// Get current record to process
-		$record = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord($table, $uid);
+		$record = BackendUtility::getRecord($table, $uid);
 
 		// Build request
 		if ($table === 'pages') {
@@ -309,7 +321,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 
 		// Check for root site
 		if ($url === '' && $table === 'pages') {
-			$rootline = \TYPO3\CMS\Backend\Utility\BackendUtility::BEgetRootLine($uid);
+			$rootline = BackendUtility::BEgetRootLine($uid);
 			if (is_array($rootline) && count($rootline) > 1) {
 				// If uid equals the site root we have to process
 				if ($uid == $rootline[1]['uid']) {
@@ -342,7 +354,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 
 		return array(
 			array(
-				'status' => \TYPO3\CMS\Core\Messaging\FlashMessage::ERROR,
+				'status' => Messaging\FlashMessage::ERROR,
 				'message' => array('No valid URL was generated.', 'table: ' . $table, 'uid: ' . $uid, 'host: ' . $host),
 				'requestHeader' => array($url)
 			)
@@ -357,11 +369,11 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 	 */
 	protected function createTSFE($id) {
 		if (!is_object($GLOBALS['TT'])) {
-			$GLOBALS['TT'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\TimeTracker\NullTimeTracker::class);
+			$GLOBALS['TT'] = GeneralUtility::makeInstance(NullTimeTracker::class);
 		}
 
-		$GLOBALS['TSFE'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController::class, $GLOBALS['TYPO3_CONF_VARS'], $id, 0);
-		$GLOBALS['TSFE']->sys_page = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\Page\PageRepository::class);
+		$GLOBALS['TSFE'] = GeneralUtility::makeInstance(TypoScriptFrontendController::class, $GLOBALS['TYPO3_CONF_VARS'], $id, 0);
+		$GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(Page\PageRepository::class);
 		try {
 			$GLOBALS['TSFE']->initTemplate();
 			$GLOBALS['TSFE']->getPageAndRootline();
@@ -373,10 +385,10 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 			}
 			$GLOBALS['TSFE']->newcObj();
 
-			\TYPO3\CMS\Frontend\Page\PageGenerator::pagegenInit();
-		} catch (\TYPO3\CMS\Core\Error\Http\PageNotFoundException $e) {
+			Page\PageGenerator::pagegenInit();
+		} catch (Http\PageNotFoundException $e) {
 			return FALSE;
-		} catch (\TYPO3\CMS\Core\Error\Http\ServiceUnavailableException $e) {
+		} catch (Http\ServiceUnavailableException $e) {
 			return FALSE;
 		}
 
@@ -401,11 +413,11 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 				'pageId' => $pageId,
 				'host' => $host,
 			);
-			/** @var tx_vcc_hook_communicationServiceHookInterface $hookObject */
+			/** @var CommunicationServiceHookInterface $hookObject */
 			$url = $hookObject->changeUrlBeforeProcessing($params, $this);
 		}
 
-		$serverArray = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $this->configuration['server'], 1);
+		$serverArray = GeneralUtility::trimExplode(',', $this->configuration['server'], 1);
 		foreach ($serverArray as $server) {
 			$response = array(
 				'server' => $server
@@ -421,18 +433,18 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 			// Check for curl functions
 			if (!function_exists('curl_init')) {
 				// TODO: Implement fallback to file_get_contents()
-				$response['status'] = \TYPO3\CMS\Core\Messaging\FlashMessage::ERROR;
+				$response['status'] = Messaging\FlashMessage::ERROR;
 				$response['message'] = 'No curl_init available';
 			} else {
 				// If no host was given we need to loop over all
 				$hostArray = array();
 				if ($host !== '') {
-					$hostArray = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $host, 1);
+					$hostArray = GeneralUtility::trimExplode(',', $host, 1);
 				} else {
 					// Get all (non-redirecting) domains from root
-					$rootLine = \TYPO3\CMS\Backend\Utility\BackendUtility::BEgetRootLine($pageId);
+					$rootLine = BackendUtility::BEgetRootLine($pageId);
 					foreach ($rootLine as $row) {
-						$domainArray = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordsByField('sys_domain', 'pid', $row['uid'], ' AND redirectTo="" AND hidden=0');
+						$domainArray = BackendUtility::getRecordsByField('sys_domain', 'pid', $row['uid'], ' AND redirectTo="" AND hidden=0');
 						if (is_array($domainArray) && !empty($domainArray)) {
 							foreach ($domainArray as $domain) {
 								$hostArray[] = $domain['domainName'];
@@ -445,7 +457,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 
 				// Fallback to current server
 				if (empty($hostArray)) {
-					$domain = rtrim(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('TYPO3_SITE_URL'), '/');
+					$domain = rtrim(GeneralUtility::getIndpEnv('TYPO3_SITE_URL'), '/');
 					$hostArray[] = substr($domain, strpos($domain, '://') + 3);
 				}
 
@@ -489,24 +501,24 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 						'url' => $url,
 					);
 					foreach ($this->hookObjects as $hookObject) {
-						/** @var tx_vcc_hook_communicationServiceHookInterface $hookObject */
+						/** @var CommunicationServiceHookInterface $hookObject */
 						$hookObject->preProcess($params, $ch, $request, $response, $this);
 					}
 					unset($hookObject);
 
 					$header = curl_exec($ch);
 					if (!curl_error($ch)) {
-						$response['status'] = (curl_getinfo($ch, CURLINFO_HTTP_CODE) == 200) ? \TYPO3\CMS\Core\Messaging\FlashMessage::OK : \TYPO3\CMS\Core\Messaging\FlashMessage::ERROR;
+						$response['status'] = (curl_getinfo($ch, CURLINFO_HTTP_CODE) == 200) ? Messaging\FlashMessage::OK : Messaging\FlashMessage::ERROR;
 						$response['message'] = preg_split('/(\r|\n)+/m', trim($header));
 					} else {
-						$response['status'] = \TYPO3\CMS\Core\Messaging\FlashMessage::ERROR;
+						$response['status'] = Messaging\FlashMessage::ERROR;
 						$response['message'] = array(curl_error($ch));
 					}
 					$response['requestHeader'] = preg_split('/(\r|\n)+/m', trim(curl_getinfo($ch, CURLINFO_HEADER_OUT)));
 
 					// Include postProcess hook (e.g. to start some other jobs)
 					foreach ($this->hookObjects as $hookObject) {
-						/** @var tx_vcc_hook_communicationServiceHookInterface $hookObject */
+						/** @var CommunicationServiceHookInterface $hookObject */
 						$hookObject->postProcess($params, $ch, $request, $response, $this);
 					}
 					unset($hookObject);
@@ -520,7 +532,7 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 						'host' => $host,
 						'response' => $response
 					);
-					$logType = ($response['status'] == \TYPO3\CMS\Core\Messaging\FlashMessage::OK) ? tx_vcc_service_loggingService::OK : tx_vcc_service_loggingService::ERROR;
+					$logType = ($response['status'] == Messaging\FlashMessage::OK) ? LoggingService::OK : LoggingService::ERROR;
 					$this->loggingService->log('CommunicationService::processClearCacheCommand', $logData, $logType, $pageId, 3);
 
 					$responseArray[] = $response;

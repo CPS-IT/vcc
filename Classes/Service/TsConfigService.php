@@ -1,4 +1,6 @@
 <?php
+namespace CPSIT\Vcc\Service;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -22,6 +24,10 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * Service to handle TSConfig settings
  *
@@ -29,7 +35,7 @@
  * @package TYPO3
  * @subpackage vcc
  */
-class tx_vcc_service_tsConfigService implements \TYPO3\CMS\Core\SingletonInterface {
+class TsConfigService implements SingletonInterface {
 
 	/**
 	 * @var array
@@ -37,7 +43,7 @@ class tx_vcc_service_tsConfigService implements \TYPO3\CMS\Core\SingletonInterfa
 	protected $configurationArray = array();
 
 	/**
-	 * @var tx_vcc_service_loggingService|NULL
+	 * @var LoggingService|NULL
 	 */
 	protected $loggingService = NULL;
 
@@ -45,17 +51,17 @@ class tx_vcc_service_tsConfigService implements \TYPO3\CMS\Core\SingletonInterfa
 	 * Initialize the object
 	 */
 	public function __construct() {
-		$loggingService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_vcc_service_loggingService');
+		$loggingService = GeneralUtility::makeInstance(LoggingService::class);
 		$this->injectLoggingService($loggingService);
 	}
 
 	/**
 	 * Injects the logging service
 	 *
-	 * @param tx_vcc_service_loggingService $loggingService
+	 * @param \CPSIT\Vcc\Service\LoggingService $loggingService
 	 * @return void
 	 */
-	public function injectLoggingService(tx_vcc_service_loggingService $loggingService) {
+	public function injectLoggingService(LoggingService $loggingService) {
 		$this->loggingService = $loggingService;
 	}
 
@@ -67,7 +73,7 @@ class tx_vcc_service_tsConfigService implements \TYPO3\CMS\Core\SingletonInterfa
 	 */
 	public function getConfiguration($id) {
 		if (!isset($this->configurationArray[$id])) {
-			$modTsConfig = \TYPO3\CMS\Backend\Utility\BackendUtility::getModTSconfig($id, 'mod.vcc');
+			$modTsConfig = BackendUtility::getModTSconfig($id, 'mod.vcc');
 			$this->configurationArray[$id] = $modTsConfig['properties'];
 
 			// Log debug information

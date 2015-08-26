@@ -24,39 +24,48 @@ namespace CPSIT\Vcc\Service;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use TYPO3\CMS\Core\SingletonInterface;
-
 /**
- * Service to handle extension settings
+ * Adds the interface for hook objects of the communicationService
  *
  * @author Nicole Cordes <cordes@cps-it.de>
  * @package TYPO3
  * @subpackage vcc
  */
-class ExtensionSettingService implements SingletonInterface {
-
-	const extensionKey = 'vcc';
+interface CommunicationServiceHookInterface {
 
 	/**
-	 * @var array
-	 */
-	protected $configuration = array();
-
-	/**
-	 * Initialize the object
-	 */
-	public function __construct() {
-		$this->configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][self::extensionKey]);
-	}
-
-	/**
-	 * Returns the configuration
+	 * Function to change the url before processing it
 	 *
-	 * @return array
+	 * @param array $params
+	 * @param CommunicationService $pObj
+	 * @return string
 	 */
-	public function getConfiguration() {
-		return $this->configuration;
-	}
+	public function changeUrlBeforeProcessing($params, &$pObj);
+
+	/**
+	 * Function which is called before the request is sent to the server
+	 *
+	 * @param array $params
+	 * @param resource $ch
+	 * @param string $request
+	 * @param array $response
+	 * @param CommunicationService $pObj
+	 * @return void
+	 */
+	public function preProcess($params, &$ch, &$request, &$response, &$pObj);
+
+	/**
+	 * Function which is called after the request was sent to the server and
+	 * some response options were set
+	 *
+	 * @param array $params
+	 * @param resource $ch
+	 * @param string $request
+	 * @param array $response
+	 * @param CommunicationService $pObj
+	 * @return void
+	 */
+	public function postProcess($params, &$ch, &$request, &$response, &$pObj);
 }
 
 ?>
