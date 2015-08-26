@@ -32,6 +32,15 @@
 interface tx_vcc_hook_communicationServiceHookInterface {
 
 	/**
+	 * Function to change the url before processing it
+	 *
+	 * @param array $params
+	 * @param tx_vcc_service_communicationService $pObj
+	 * @return string
+	 */
+	public function changeUrlBeforeProcessing($params, &$pObj);
+
+	/**
 	 * Function which is called before the request is sent to the server
 	 *
 	 * @param array $params

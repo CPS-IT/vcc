@@ -395,6 +395,16 @@ class tx_vcc_service_communicationService implements \TYPO3\CMS\Core\SingletonIn
 	protected function processClearCacheCommand($url, $pageId, $host = '', $quote = TRUE) {
 		$responseArray = array();
 
+		foreach ($this->hookObjects as $hookObject) {
+			$params = array(
+				'url' => $url,
+				'pageId' => $pageId,
+				'host' => $host,
+			);
+			/** @var tx_vcc_hook_communicationServiceHookInterface $hookObject */
+			$url = $hookObject->changeUrlBeforeProcessing($params, $this);
+		}
+
 		$serverArray = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $this->configuration['server'], 1);
 		foreach ($serverArray as $server) {
 			$response = array(
