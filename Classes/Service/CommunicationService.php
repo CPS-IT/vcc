@@ -191,8 +191,7 @@ class CommunicationService implements SingletonInterface {
 				$message = 'Request: ' . $result['request'];
 				switch ($result['status']) {
 					case Messaging\FlashMessage::OK:
-						$content .= 'parent.TYPO3.Flashmessage.display(
-								TYPO3.Severity.ok,
+						$content .= 'top.TYPO3.Notification.success(
 								"' . $header . '",
 								"' . $message . '<br />Message: ' . $result['message'][0] . '",
 								5
@@ -200,8 +199,7 @@ class CommunicationService implements SingletonInterface {
 						break;
 
 					default:
-						$content .= 'parent.TYPO3.Flashmessage.display(
-								TYPO3.Severity.error,
+						$content .= 'top.TYPO3.Notification.error(
 								"' . $header . '",
 								"' . $message . '<br />Message: ' . implode('<br />', $result['message']) .
 									'<br />Sent:<br />' . implode('<br />', $result['requestHeader']) . '",
