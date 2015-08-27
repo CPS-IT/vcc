@@ -38,9 +38,9 @@ interface CommunicationServiceHookInterface {
 	 *
 	 * @param array $params
 	 * @param CommunicationService $pObj
-	 * @return string
+	 * @return void
 	 */
-	public function changeUrlBeforeProcessing($params, &$pObj);
+	public function processClearCacheCommandGetUrl($params, &$pObj);
 
 	/**
 	 * Function which is called before the request is sent to the server
@@ -52,7 +52,7 @@ interface CommunicationServiceHookInterface {
 	 * @param CommunicationService $pObj
 	 * @return void
 	 */
-	public function preProcess($params, &$ch, &$request, &$response, &$pObj);
+	public function processClearCacheCommandPreProcess($params, &$ch, &$request, &$response, &$pObj);
 
 	/**
 	 * Function which is called after the request was sent to the server and
@@ -65,7 +65,7 @@ interface CommunicationServiceHookInterface {
 	 * @param CommunicationService $pObj
 	 * @return void
 	 */
-	public function postProcess($params, &$ch, &$request, &$response, &$pObj);
+	public function processClearCacheCommandPostProcess($params, &$ch, &$request, &$response, &$pObj);
 }
 
 ?>

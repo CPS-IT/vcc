@@ -435,12 +435,12 @@ class CommunicationService implements SingletonInterface {
 
 		foreach ($this->hookObjects as $hookObject) {
 			$params = array(
-				'url' => $url,
+				'url' => &$url,
 				'pageId' => $pageId,
 				'host' => $host,
 			);
 			/** @var CommunicationServiceHookInterface $hookObject */
-			$url = $hookObject->changeUrlBeforeProcessing($params, $this);
+			$hookObject->processClearCacheCommandGetUrl($params, $this);
 		}
 
 		$serverArray = GeneralUtility::trimExplode(',', $this->configuration['server'], 1);
@@ -528,7 +528,7 @@ class CommunicationService implements SingletonInterface {
 					);
 					foreach ($this->hookObjects as $hookObject) {
 						/** @var CommunicationServiceHookInterface $hookObject */
-						$hookObject->preProcess($params, $ch, $request, $response, $this);
+						$hookObject->processClearCacheCommandPreProcess($params, $ch, $request, $response, $this);
 					}
 					unset($hookObject);
 
@@ -545,7 +545,7 @@ class CommunicationService implements SingletonInterface {
 					// Include postProcess hook (e.g. to start some other jobs)
 					foreach ($this->hookObjects as $hookObject) {
 						/** @var CommunicationServiceHookInterface $hookObject */
-						$hookObject->postProcess($params, $ch, $request, $response, $this);
+						$hookObject->processClearCacheCommandPostProcess($params, $ch, $request, $response, $this);
 					}
 					unset($hookObject);
 
