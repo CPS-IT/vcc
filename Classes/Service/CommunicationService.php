@@ -124,6 +124,34 @@ class CommunicationService implements SingletonInterface {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getConfiguration() {
+		return $this->configuration;
+	}
+
+	/**
+	 * @return ContentObjectRenderer
+	 */
+	public function getContentObject() {
+		return $this->contentObject;
+	}
+
+	/**
+	 * @return LoggingService
+	 */
+	public function getLoggingService() {
+		return $this->loggingService;
+	}
+
+	/**
+	 * @return TsConfigService
+	 */
+	public function getTsConfigService() {
+		return $this->tsConfigService;
+	}
+
+	/**
 	 * @return void
 	 */
 	protected function initializeHookObjects() {
