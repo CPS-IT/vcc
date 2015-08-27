@@ -192,17 +192,17 @@ class CommunicationService implements SingletonInterface {
 				switch ($result['status']) {
 					case Messaging\FlashMessage::OK:
 						$content .= 'top.TYPO3.Notification.success(
-								"' . $header . '",
-								"' . $message . '<br />Message: ' . $result['message'][0] . '",
+								"' . htmlspecialchars($header) . '",
+								"' . htmlspecialchars($message) . '<br />Message: ' . htmlspecialchars($result['message'][0]) . '",
 								5
 							);';
 						break;
 
 					default:
 						$content .= 'top.TYPO3.Notification.error(
-								"' . $header . '",
-								"' . $message . '<br />Message: ' . implode('<br />', $result['message']) .
-									'<br />Sent:<br />' . implode('<br />', $result['requestHeader']) . '",
+								"' . htmlspecialchars($header) . '",
+								"' . htmlspecialchars($message) . '<br />Message: ' . htmlspecialchars(implode('<br />', $result['message'])) .
+									'<br />Sent:<br />' . htmlspecialchars(implode('<br />', $result['requestHeader'])) . '",
 								10
 							);';
 						break;
@@ -318,6 +318,17 @@ class CommunicationService implements SingletonInterface {
 	public function sendClearCacheCommandForTables($table, $uid, $host = '', $quote = TRUE) {
 		// Get current record to process
 		$record = BackendUtility::getRecord($table, $uid);
+
+		foreach ($this->hookObjects as $hookObject) {
+			$params = array(
+				'record' => &$record,
+				'table' => $table,
+				'uid' => $uid,
+				'host' => $host,
+			);
+			/** @var CommunicationServiceHookInterface $hookObject */
+			$hookObject->sendClearCacheCommandForTablesGetRecord($params, $this);
+		}
 
 		// Build request
 		if ($table === 'pages') {

@@ -34,6 +34,15 @@ namespace CPSIT\Vcc\Service;
 interface CommunicationServiceHookInterface {
 
 	/**
+	 * Function to change the record for which the cache clear process is executed
+	 *
+	 * @param array $params
+	 * @param $pObj
+	 * @return void
+	 */
+	public function sendClearCacheCommandForTablesGetRecord($params, $pObj);
+
+	/**
 	 * Function to change the url before processing it
 	 *
 	 * @param array $params
