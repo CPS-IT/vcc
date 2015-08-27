@@ -1,4 +1,6 @@
 <?php
+namespace CPSIT\Vcc\Service;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -22,6 +24,8 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\SingletonInterface;
+
 /**
  * Service to handle extension settings
  *
@@ -29,7 +33,7 @@
  * @package TYPO3
  * @subpackage vcc
  */
-class tx_vcc_service_extensionSettingService implements t3lib_Singleton {
+class ExtensionSettingService implements SingletonInterface {
 
 	const extensionKey = 'vcc';
 
@@ -53,10 +57,6 @@ class tx_vcc_service_extensionSettingService implements t3lib_Singleton {
 	public function getConfiguration() {
 		return $this->configuration;
 	}
-}
-
-if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Service/ExtensionSettingService.php']) {
-	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Service/ExtensionSettingService.php']);
 }
 
 ?>

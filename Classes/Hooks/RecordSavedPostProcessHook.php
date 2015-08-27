@@ -1,4 +1,6 @@
 <?php
+namespace CPSIT\Vcc\Hooks;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -22,6 +24,8 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * Clears caches after a record was saved
  *
@@ -29,15 +33,18 @@
  * @package TYPO3
  * @subpackage vcc
  */
-class Tx_Vcc_Hook_RecordSavedPostProcessHook extends Tx_Vcc_Hook_AbstractVarnishHook {
+class RecordSavedPostProcessHook extends AbstractVarnishHook {
 
 	/**
-	 * @param t3lib_TCEmain $parentObject
+	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObject
 	 * @return void
 	 */
 	public function processDatamap_afterAllOperations(&$parentObject) {
 		foreach ($parentObject->datamap as $table => $record) {
 			$uid = key($record);
+			if (isset($parentObject->substNEWwithIDs[$uid]) && ($table === 'pages' || $table === 'pages_language_overlay')) {
+				continue;
+			}
 			$uid = isset($parentObject->substNEWwithIDs[$uid]) ? $parentObject->substNEWwithIDs[$uid] : $uid;
 			if ($table === 'pages') {
 				$pageId = $uid;
@@ -50,10 +57,10 @@ class Tx_Vcc_Hook_RecordSavedPostProcessHook extends Tx_Vcc_Hook_AbstractVarnish
 				if ($this->communicationService->displayBackendMessage()) {
 					if (!isset($_POST['_saveandclosedok_x'])
 						&& !isset($_POST['_translation_savedok_x'])
-						&& t3lib_div::_GP('closeDoc') == 0
+						&& GeneralUtility::_GP('closeDoc') == 0
 					) {
 						$this->attachResultArrayToPageRenderer(
-							'Tx_Vcc_Hook_RecordSavedPostProcessHook_processDatamap_afterAllOperations_' . $table . '_' . $uid,
+							'RecordSavedPostProcessHook_processDatamap_afterAllOperations_' . $table . '_' . $uid,
 							$resultArray
 						);
 					} else {
@@ -64,10 +71,6 @@ class Tx_Vcc_Hook_RecordSavedPostProcessHook extends Tx_Vcc_Hook_AbstractVarnish
 		}
 		unset($table, $record);
 	}
-}
-
-if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Hook/Tx_Vcc_Hook_RecordSavedPostProcessHook.php']) {
-	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Hooks/Tx_Vcc_Hook_RecordSavedPostProcessHook.php']);
 }
 
 ?>

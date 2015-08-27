@@ -1,4 +1,6 @@
 <?php
+namespace CPSIT\Vcc\Service;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -22,6 +24,9 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * Service to log requests and responses
  *
@@ -29,7 +34,7 @@
  * @package TYPO3
  * @subpackage vcc
  */
-class tx_vcc_service_loggingService implements t3lib_Singleton {
+class LoggingService implements SingletonInterface {
 
 	const MODE_DISABLED = 0;
 	const MODE_MINIMAL = 1;
@@ -43,7 +48,7 @@ class tx_vcc_service_loggingService implements t3lib_Singleton {
 	const WARNING = 3;
 
 	/**
-	 * @var tx_vcc_service_extensionSettingService|NULL
+	 * @var ExtensionSettingService|NULL
 	 */
 	protected $extensionSettingService = NULL;
 
@@ -66,7 +71,7 @@ class tx_vcc_service_loggingService implements t3lib_Singleton {
 	 * Initialize the object
 	 */
 	public function __construct() {
-		$extensionSettingService = t3lib_div::makeInstance('tx_vcc_service_extensionSettingService');
+		$extensionSettingService = GeneralUtility::makeInstance(ExtensionSettingService::class);
 		$this->injectExtensionSettingService($extensionSettingService);
 
 		$configuration = $this->extensionSettingService->getConfiguration();
@@ -79,10 +84,10 @@ class tx_vcc_service_loggingService implements t3lib_Singleton {
 	/**
 	 * Injects the extension setting service
 	 *
-	 * @param tx_vcc_service_extensionSettingService $extensionSettingService
+	 * @param \CPSIT\Vcc\Service\ExtensionSettingService $extensionSettingService
 	 * @return void
 	 */
-	public function injectExtensionSettingService(tx_vcc_service_extensionSettingService $extensionSettingService) {
+	public function injectExtensionSettingService(ExtensionSettingService $extensionSettingService) {
 		$this->extensionSettingService = $extensionSettingService;
 	}
 
@@ -154,10 +159,6 @@ class tx_vcc_service_loggingService implements t3lib_Singleton {
 
 		return array();
 	}
-}
-
-if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Service/LoggingService.php']) {
-	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Service/LoggingService.php']);
 }
 
 ?>

@@ -1,4 +1,6 @@
 <?php
+namespace CPSIT\Vcc\Hooks;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -22,6 +24,12 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Backend\Template\DocumentTemplate;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Backend\Utility\IconUtility;
+use TYPO3\CMS\Core\Html\HtmlParser;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * Adds the cache clear button to the edit form
  *
@@ -29,10 +37,10 @@
  * @package TYPO3
  * @subpackage vcc
  */
-class Tx_Vcc_Hook_ClearCacheIconHook extends Tx_Vcc_Hook_AbstractVarnishHook {
+class ClearCacheIconHook extends AbstractVarnishHook {
 
 	/**
-	 * @var template|NULL
+	 * @var DocumentTemplate|NULL
 	 */
 	protected $pObj = NULL;
 
@@ -45,7 +53,7 @@ class Tx_Vcc_Hook_ClearCacheIconHook extends Tx_Vcc_Hook_AbstractVarnishHook {
 	 * Checks access to the record and adds the clear cache button
 	 *
 	 * @param array $params
-	 * @param template $pObj
+	 * @param DocumentTemplate $pObj
 	 * @return void
 	 */
 	public function addButton($params, $pObj) {
@@ -56,11 +64,12 @@ class Tx_Vcc_Hook_ClearCacheIconHook extends Tx_Vcc_Hook_AbstractVarnishHook {
 		$table = '';
 
 		// For web -> page view or web -> list view
-		if ($this->pObj->scriptID === 'ext/cms/layout/db_layout.php' || $this->pObj->scriptID === 'ext/recordlist/mod1/index.php') {
-			$id = t3lib_div::_GP('id');
+		$module = GeneralUtility::_GP('M');
+		if ($module === 'web_layout' || $module === 'web_list') {
+			$id = GeneralUtility::_GP('id');
 			if (is_object($GLOBALS['SOBE']) && $GLOBALS['SOBE']->current_sys_language) {
 				$table = 'pages_language_overlay';
-				$record = t3lib_BEfunc::getRecordsByField($table, 'pid', $id, ' AND ' . $table . '.sys_language_uid=' . intval($GLOBALS['SOBE']->current_sys_language), '', '', '1');
+				$record = BackendUtility::getRecordsByField($table, 'pid', $id, ' AND ' . $table . '.sys_language_uid=' . intval($GLOBALS['SOBE']->current_sys_language), '', '', '1');
 				if (is_array($record) && !empty($record)) {
 					$record = $record[0];
 				}
@@ -71,8 +80,8 @@ class Tx_Vcc_Hook_ClearCacheIconHook extends Tx_Vcc_Hook_AbstractVarnishHook {
 					'pid' => $id
 				);
 			}
-		} elseif ($this->pObj->scriptID === 'typo3/alt_doc.php') { // For record edit
-			$editConf = t3lib_div::_GP('edit');
+		} elseif (GeneralUtility::_GP('route') === '/record/edit') { // For record edit
+			$editConf = GeneralUtility::_GP('edit');
 			if (is_array($editConf) && !empty($editConf)) {
 				// Finding the current table
 				reset($editConf);
@@ -86,7 +95,7 @@ class Tx_Vcc_Hook_ClearCacheIconHook extends Tx_Vcc_Hook_AbstractVarnishHook {
 					$record['uid'] = $recordUid;
 					$record['pid'] = $recordUid;
 				} else {
-					$record = t3lib_BEfunc::getRecord($table, $recordUid, 'uid, pid');
+					$record = BackendUtility::getRecord($table, $recordUid, 'uid, pid');
 				}
 			}
 		}
@@ -105,8 +114,8 @@ class Tx_Vcc_Hook_ClearCacheIconHook extends Tx_Vcc_Hook_AbstractVarnishHook {
 
 				// Add button to button list and extend layout
 				$this->params['buttons']['vcc'] = $button;
-				$buttonWrap = t3lib_parsehtml::getSubpart($pObj->moduleTemplate, '###BUTTON_GROUP_WRAP###');
-				$this->params['markers']['BUTTONLIST_LEFT'] .= t3lib_parsehtml::substituteMarker($buttonWrap, '###BUTTONS###', trim($button));
+				$buttonWrap = HtmlParser::getSubpart($pObj->moduleTemplate, '###BUTTON_GROUP_WRAP###');
+				$this->params['markers']['BUTTONLIST_LEFT'] .= HtmlParser::substituteMarker($buttonWrap, '###BUTTONS###', trim($button));
 			}
 		}
 	}
@@ -121,10 +130,10 @@ class Tx_Vcc_Hook_ClearCacheIconHook extends Tx_Vcc_Hook_AbstractVarnishHook {
 		$html = '<input type="image" class="c-inputButton" name="_clearvarnishcache" src="clear.gif" title="Clear Varnish cache" />';
 
 		if ($wrapWithForm) {
-			$html = '<form action="' . t3lib_div::getindpenv('REQUEST_URI') . '" method="post">' . $html . '</form>';
+			$html = '<form action="' . GeneralUtility::getindpenv('REQUEST_URI') . '" method="post">' . $html . '</form>';
 		}
 
-		return t3lib_iconWorks::getSpriteIcon(
+		return IconUtility::getSpriteIcon(
 			'extensions-vcc-clearVarnishCache',
 			array(
 				'html' => $html
@@ -148,10 +157,6 @@ class Tx_Vcc_Hook_ClearCacheIconHook extends Tx_Vcc_Hook_AbstractVarnishHook {
 
 		return $string;
 	}
-}
-
-if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Hook/Tx_Vcc_Hook_ClearCacheIcon.php']) {
-	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/vcc/Classes/Hooks/Tx_Vcc_Hook_ClearCacheIcon.php']);
 }
 
 ?>

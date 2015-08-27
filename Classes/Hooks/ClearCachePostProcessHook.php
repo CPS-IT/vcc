@@ -1,8 +1,10 @@
 <?php
+namespace CPSIT\Vcc\Hooks;
+
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2012 Nicole Cordes <cordes@cps-it.de>
+ *  (c) 2014 Nicole Cordes <cordes@cps-it.de>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -22,39 +24,38 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Utility\MathUtility;
+
 /**
- * Adds the interface for hook objects of the communicationService
+ * Clears caches after a record was saved
  *
  * @author Nicole Cordes <cordes@cps-it.de>
  * @package TYPO3
  * @subpackage vcc
  */
-interface tx_vcc_hook_communicationServiceHookInterface {
+class ClearCachePostProcessHook extends AbstractVarnishHook {
 
 	/**
-	 * Function which is called before the request is sent to the server
-	 *
 	 * @param array $params
-	 * @param resource $ch
-	 * @param string $request
-	 * @param array $response
-	 * @param tx_vcc_service_communicationService $pObj
+	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObject
 	 * @return void
 	 */
-	public function preProcess($params, &$ch, &$request, &$response, &$pObj);
-
-	/**
-	 * Function which is called after the request was sent to the server and
-	 * some response options were set
-	 *
-	 * @param array $params
-	 * @param resource $ch
-	 * @param string $request
-	 * @param array $response
-	 * @param tx_vcc_service_communicationService $pObj
-	 * @return void
-	 */
-	public function postProcess($params, &$ch, &$request, &$response, &$pObj);
+	public function clearCacheByCommand($params, &$parentObject) {
+		if (!empty($params['cacheCmd'])) {
+			$resultArray = array();
+			if (in_array(strtolower($params['cacheCmd']), array('all', 'pages'))) {
+				$resultArray = $this->communicationService->sendClearCacheCommandForFiles('');
+			} elseif (MathUtility::canBeInterpretedAsInteger($params['cacheCmd'])) {
+				$resultArray = $this->communicationService->sendClearCacheCommandForTables('pages', (int) $params['cacheCmd']);
+			}
+			if ($this->communicationService->displayBackendMessage()) {
+				$this->attachResultArrayToPageRenderer(
+					'ClearCachePostProcessHook_clearCacheByCommand_' . $params['cacheCmd'],
+					$resultArray
+				);
+			}
+		}
+	}
 }
 
 ?>
