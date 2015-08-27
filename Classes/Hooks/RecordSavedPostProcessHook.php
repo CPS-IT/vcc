@@ -42,6 +42,9 @@ class RecordSavedPostProcessHook extends AbstractVarnishHook {
 	public function processDatamap_afterAllOperations(&$parentObject) {
 		foreach ($parentObject->datamap as $table => $record) {
 			$uid = key($record);
+			if (isset($parentObject->substNEWwithIDs[$uid]) && ($table === 'pages' || $table === 'pages_language_overlay')) {
+				continue;
+			}
 			$uid = isset($parentObject->substNEWwithIDs[$uid]) ? $parentObject->substNEWwithIDs[$uid] : $uid;
 			if ($table === 'pages') {
 				$pageId = $uid;
