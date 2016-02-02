@@ -1,3 +1,6 @@
+2016-02-02         [RELEASE] Release of vcc 2.0.3 (Nicole Cordes)
+2016-02-02 2d99e2b [HOTFIX] Init fe_user and usergroups for proper page access check (Nicole Cordes)
+
 2015-07-30         [RELEASE] Release of vcc 2.0.2 (Nicole Cordes)
 2015-07-30 8d593b3 [HOTFIX] Get page access permissions according to table (Nicole Cordes)
 

@@ -412,6 +412,8 @@ class CommunicationService implements SingletonInterface {
 		$GLOBALS['TSFE'] = GeneralUtility::makeInstance(TypoScriptFrontendController::class, $GLOBALS['TYPO3_CONF_VARS'], $id, 0);
 		$GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(Page\PageRepository::class);
 		try {
+			$GLOBALS['TSFE']->initFEuser();
+			$GLOBALS['TSFE']->initUserGroups();
 			$GLOBALS['TSFE']->initTemplate();
 			$GLOBALS['TSFE']->getPageAndRootline();
 			$GLOBALS['TSFE']->getConfigArray();
