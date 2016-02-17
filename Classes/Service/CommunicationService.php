@@ -364,7 +364,11 @@ class tx_vcc_service_communicationService implements t3lib_Singleton {
 			$GLOBALS['TT'] = t3lib_div::makeInstance('t3lib_TimeTrackNull');
 		}
 
-		$GLOBALS['TSFE'] = t3lib_div::makeInstance('tslib_fe', $GLOBALS['TYPO3_CONF_VARS'], $id, 0);
+		$TYPO3_CONF_VARS = $GLOBALS['TYPO3_CONF_VARS'];
+		$TYPO3_CONF_VARS['FE']['pageNotFound_handling'] = FALSE;
+		$TYPO3_CONF_VARS['FE']['pageUnavailable_handling'] = FALSE;
+		$TYPO3_CONF_VARS['FE']['pageNotFoundOnCHashError'] = FALSE;
+		$GLOBALS['TSFE'] = t3lib_div::makeInstance('tslib_fe', $TYPO3_CONF_VARS, $id, 0);
 		$GLOBALS['TSFE']->sys_page = t3lib_div::makeInstance('t3lib_pageSelect');
 		try {
 			$GLOBALS['TSFE']->initFEuser();
