@@ -1,3 +1,6 @@
+2016-02-17         [RELEASE] Release of vcc 2.0.4 (Nicole Cordes)
+2016-02-17 e789be1 [HOTFIX] Prevent any pageNotFound handling (Nicole Cordes)
+
 2016-02-02         [RELEASE] Release of vcc 2.0.3 (Nicole Cordes)
 2016-02-02 2d99e2b [HOTFIX] Init fe_user and usergroups for proper page access check (Nicole Cordes)
 

@@ -409,7 +409,11 @@ class CommunicationService implements SingletonInterface {
 			$GLOBALS['TT'] = GeneralUtility::makeInstance(NullTimeTracker::class);
 		}
 
-		$GLOBALS['TSFE'] = GeneralUtility::makeInstance(TypoScriptFrontendController::class, $GLOBALS['TYPO3_CONF_VARS'], $id, 0);
+		$TYPO3_CONF_VARS = $GLOBALS['TYPO3_CONF_VARS'];
+		$TYPO3_CONF_VARS['FE']['pageNotFound_handling'] = FALSE;
+		$TYPO3_CONF_VARS['FE']['pageUnavailable_handling'] = FALSE;
+		$TYPO3_CONF_VARS['FE']['pageNotFoundOnCHashError'] = FALSE;
+		$GLOBALS['TSFE'] = GeneralUtility::makeInstance(TypoScriptFrontendController::class, $TYPO3_CONF_VARS, $id, 0);
 		$GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(Page\PageRepository::class);
 		try {
 			$GLOBALS['TSFE']->initFEuser();
