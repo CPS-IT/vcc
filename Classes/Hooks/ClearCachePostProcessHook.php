@@ -24,6 +24,7 @@ namespace CPSIT\Vcc\Hooks;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\MathUtility;
 
 /**
@@ -38,7 +39,7 @@ class ClearCachePostProcessHook extends AbstractVarnishHook
 
     /**
      * @param array $params
-     * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObject
+     * @param DataHandler $parentObject
      * @return void
      */
     public function clearCacheByCommand($params, &$parentObject)

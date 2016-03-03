@@ -121,7 +121,7 @@ abstract class AbstractVarnishHook
     protected function attachResultArrayToPageRenderer($name, $resultArray)
     {
         $message = $this->communicationService->generateBackendMessage($resultArray, false);
-        /** @var \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer */
+        /** @var PageRenderer $pageRenderer */
         $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
         $pageRenderer->addJsInlineCode($name, $message);
     }

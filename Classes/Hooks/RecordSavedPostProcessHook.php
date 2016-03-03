@@ -24,6 +24,7 @@ namespace CPSIT\Vcc\Hooks;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -37,7 +38,7 @@ class RecordSavedPostProcessHook extends AbstractVarnishHook
 {
 
     /**
-     * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObject
+     * @param DataHandler $parentObject
      * @return void
      */
     public function processDatamap_afterAllOperations(&$parentObject)

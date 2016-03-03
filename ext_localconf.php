@@ -9,13 +9,13 @@ if (TYPO3_MODE === 'BE') {
     if ($extensionConfiguration['cacheControl'] === 'manual') {
         // Register hook to add the cache clear button to configured items in different views
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['Backend\Template\Components\ButtonBar']['getButtonsHook']['vcc'] =
-            'CPSIT\Vcc\Hooks\ClearCacheIconHook->addButton';
+            \CPSIT\Vcc\Hooks\ClearCacheIconHook::class . '->addButton';
     } elseif ($extensionConfiguration['cacheControl'] === 'automatic') {
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['vcc'] =
-            'CPSIT\Vcc\Hooks\RecordSavedPostProcessHook';
+            \CPSIT\Vcc\Hooks\RecordSavedPostProcessHook::class;
 
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc']['vcc'] =
-            'CPSIT\Vcc\Hooks\ClearCachePostProcessHook->clearCacheByCommand';
+            \CPSIT\Vcc\Hooks\ClearCachePostProcessHook::class . '->clearCacheByCommand';
     }
 
     // Initialize array for internal hooks
