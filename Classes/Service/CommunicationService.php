@@ -193,17 +193,17 @@ class CommunicationService implements SingletonInterface {
 				switch ($result['status']) {
 					case Messaging\FlashMessage::OK:
 						$content .= 'top.TYPO3.Notification.success(
-								"' . htmlspecialchars($header) . '",
-								"' . htmlspecialchars($message) . '<br />Message: ' . htmlspecialchars($result['message'][0]) . '",
+								"' . $header . '",
+								"' . $message . '\nMessage: ' . $result['message'][0] . '",
 								5
 							);';
 						break;
 
 					default:
 						$content .= 'top.TYPO3.Notification.error(
-								"' . htmlspecialchars($header) . '",
-								"' . htmlspecialchars($message) . '<br />Message: ' . htmlspecialchars(implode('<br />', $result['message'])) .
-									'<br />Sent:<br />' . htmlspecialchars(implode('<br />', $result['requestHeader'])) . '",
+								"' . $header . '",
+								"' . $message . '\nMessage: ' . implode('\n', $result['message']) .
+									'\nSent:\n' . implode('\n', $result['requestHeader']) . '",
 								10
 							);';
 						break;
