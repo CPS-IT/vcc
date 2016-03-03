@@ -26,6 +26,7 @@ namespace CPSIT\Vcc\Service;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Messaging;
+use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\TimeTracker\NullTimeTracker;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -424,7 +425,8 @@ class CommunicationService implements SingletonInterface {
 			//$GLOBALS['TSFE']->tmpl->start($GLOBALS['TSFE']->sys_page->getRootline($id));
 			if (TYPO3_MODE == 'BE') {
 				// Set current backend language
-				$GLOBALS['TSFE']->getPageRenderer()->setLanguage($GLOBALS['LANG']->lang);
+				$pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+				$pageRenderer->setLanguage($GLOBALS['LANG']->lang);
 			}
 			$GLOBALS['TSFE']->newcObj();
 
