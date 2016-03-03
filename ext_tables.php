@@ -4,10 +4,14 @@ if (!defined('TYPO3_MODE')) {
 }
 
 // Register sprite icons
-$icons = array(
-	'clearVarnishCache' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('vcc') . 'Resources/Public/Icons/CachePlugin.png',
+$iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Imaging\\IconRegistry');
+$iconRegistry->registerIcon(
+	'vcc-clearVarnishCache',
+	\TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider::class,
+	array(
+		'source' => 'EXT:vcc/Resources/Public/Icons/CachePlugin.png',
+	)
 );
-\TYPO3\CMS\Backend\Sprite\SpriteManager::addSingleIcons($icons, 'vcc');
 
 // Add default module settings
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
