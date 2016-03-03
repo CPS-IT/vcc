@@ -33,29 +33,31 @@ use TYPO3\CMS\Core\Utility\MathUtility;
  * @package TYPO3
  * @subpackage vcc
  */
-class ClearCachePostProcessHook extends AbstractVarnishHook {
+class ClearCachePostProcessHook extends AbstractVarnishHook
+{
 
-	/**
-	 * @param array $params
-	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObject
-	 * @return void
-	 */
-	public function clearCacheByCommand($params, &$parentObject) {
-		if (!empty($params['cacheCmd'])) {
-			$resultArray = array();
-			if (in_array(strtolower($params['cacheCmd']), array('all', 'pages'))) {
-				$resultArray = $this->communicationService->sendClearCacheCommandForFiles('');
-			} elseif (MathUtility::canBeInterpretedAsInteger($params['cacheCmd'])) {
-				$resultArray = $this->communicationService->sendClearCacheCommandForTables('pages', (int) $params['cacheCmd']);
-			}
-			if ($this->communicationService->displayBackendMessage()) {
-				$this->attachResultArrayToPageRenderer(
-					'ClearCachePostProcessHook_clearCacheByCommand_' . $params['cacheCmd'],
-					$resultArray
-				);
-			}
-		}
-	}
+    /**
+     * @param array $params
+     * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObject
+     * @return void
+     */
+    public function clearCacheByCommand($params, &$parentObject)
+    {
+        if (!empty($params['cacheCmd'])) {
+            $resultArray = array();
+            if (in_array(strtolower($params['cacheCmd']), array('all', 'pages'))) {
+                $resultArray = $this->communicationService->sendClearCacheCommandForFiles('');
+            } elseif (MathUtility::canBeInterpretedAsInteger($params['cacheCmd'])) {
+                $resultArray = $this->communicationService->sendClearCacheCommandForTables('pages', (int)$params['cacheCmd']);
+            }
+            if ($this->communicationService->displayBackendMessage()) {
+                $this->attachResultArrayToPageRenderer(
+                    'ClearCachePostProcessHook_clearCacheByCommand_' . $params['cacheCmd'],
+                    $resultArray
+                );
+            }
+        }
+    }
 }
 
 ?>

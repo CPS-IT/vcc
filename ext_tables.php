@@ -1,16 +1,16 @@
 <?php
 if (!defined('TYPO3_MODE')) {
-	die ('Access denied.');
+    die ('Access denied.');
 }
 
 // Register sprite icons
 $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Imaging\\IconRegistry');
 $iconRegistry->registerIcon(
-	'vcc-clearVarnishCache',
-	\TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider::class,
-	array(
-		'source' => 'EXT:vcc/Resources/Public/Icons/CachePlugin.png',
-	)
+    'vcc-clearVarnishCache',
+    \TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider::class,
+    array(
+        'source' => 'EXT:vcc/Resources/Public/Icons/CachePlugin.png',
+    )
 );
 
 // Add default module settings

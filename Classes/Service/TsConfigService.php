@@ -35,57 +35,61 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package TYPO3
  * @subpackage vcc
  */
-class TsConfigService implements SingletonInterface {
+class TsConfigService implements SingletonInterface
+{
 
-	/**
-	 * @var array
-	 */
-	protected $configurationArray = array();
+    /**
+     * @var array
+     */
+    protected $configurationArray = array();
 
-	/**
-	 * @var LoggingService|NULL
-	 */
-	protected $loggingService = NULL;
+    /**
+     * @var LoggingService|NULL
+     */
+    protected $loggingService = null;
 
-	/**
-	 * Initialize the object
-	 */
-	public function __construct() {
-		$loggingService = GeneralUtility::makeInstance(LoggingService::class);
-		$this->injectLoggingService($loggingService);
-	}
+    /**
+     * Initialize the object
+     */
+    public function __construct()
+    {
+        $loggingService = GeneralUtility::makeInstance(LoggingService::class);
+        $this->injectLoggingService($loggingService);
+    }
 
-	/**
-	 * Injects the logging service
-	 *
-	 * @param \CPSIT\Vcc\Service\LoggingService $loggingService
-	 * @return void
-	 */
-	public function injectLoggingService(LoggingService $loggingService) {
-		$this->loggingService = $loggingService;
-	}
+    /**
+     * Injects the logging service
+     *
+     * @param \CPSIT\Vcc\Service\LoggingService $loggingService
+     * @return void
+     */
+    public function injectLoggingService(LoggingService $loggingService)
+    {
+        $this->loggingService = $loggingService;
+    }
 
-	/**
-	 * Returns the configuration
-	 *
-	 * @param int $id
-	 * @return array
-	 */
-	public function getConfiguration($id) {
-		if (!isset($this->configurationArray[$id])) {
-			$modTsConfig = BackendUtility::getModTSconfig($id, 'mod.vcc');
-			$this->configurationArray[$id] = $modTsConfig['properties'];
+    /**
+     * Returns the configuration
+     *
+     * @param int $id
+     * @return array
+     */
+    public function getConfiguration($id)
+    {
+        if (!isset($this->configurationArray[$id])) {
+            $modTsConfig = BackendUtility::getModTSconfig($id, 'mod.vcc');
+            $this->configurationArray[$id] = $modTsConfig['properties'];
 
-			// Log debug information
-			$logData = array(
-				'id' => $id,
-				'configuration' => $modTsConfig['properties']
-			);
-			$this->loggingService->debug('TsConfigService::getConfiguration id: ' . $id, $logData);
-		}
+            // Log debug information
+            $logData = array(
+                'id' => $id,
+                'configuration' => $modTsConfig['properties'],
+            );
+            $this->loggingService->debug('TsConfigService::getConfiguration id: ' . $id, $logData);
+        }
 
-		return $this->configurationArray[$id];
-	}
+        return $this->configurationArray[$id];
+    }
 }
 
 ?>

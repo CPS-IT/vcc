@@ -33,44 +33,46 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package TYPO3
  * @subpackage vcc
  */
-class RecordSavedPostProcessHook extends AbstractVarnishHook {
+class RecordSavedPostProcessHook extends AbstractVarnishHook
+{
 
-	/**
-	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObject
-	 * @return void
-	 */
-	public function processDatamap_afterAllOperations(&$parentObject) {
-		foreach ($parentObject->datamap as $table => $record) {
-			$uid = key($record);
-			if (isset($parentObject->substNEWwithIDs[$uid]) && ($table === 'pages' || $table === 'pages_language_overlay')) {
-				continue;
-			}
-			$uid = isset($parentObject->substNEWwithIDs[$uid]) ? $parentObject->substNEWwithIDs[$uid] : $uid;
-			if ($table === 'pages') {
-				$pageId = $uid;
-			} else {
-				$pageId = $parentObject->getPID($table, $uid);
-			}
-			if ($this->isHookAccessible($pageId, $table)) {
-				$resultArray = $this->communicationService->sendClearCacheCommandForTables($table, $uid, '', FALSE);
+    /**
+     * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObject
+     * @return void
+     */
+    public function processDatamap_afterAllOperations(&$parentObject)
+    {
+        foreach ($parentObject->datamap as $table => $record) {
+            $uid = key($record);
+            if (isset($parentObject->substNEWwithIDs[$uid]) && ($table === 'pages' || $table === 'pages_language_overlay')) {
+                continue;
+            }
+            $uid = isset($parentObject->substNEWwithIDs[$uid]) ? $parentObject->substNEWwithIDs[$uid] : $uid;
+            if ($table === 'pages') {
+                $pageId = $uid;
+            } else {
+                $pageId = $parentObject->getPID($table, $uid);
+            }
+            if ($this->isHookAccessible($pageId, $table)) {
+                $resultArray = $this->communicationService->sendClearCacheCommandForTables($table, $uid, '', false);
 
-				if ($this->communicationService->displayBackendMessage()) {
-					if (!isset($_POST['_saveandclosedok_x'])
-						&& !isset($_POST['_translation_savedok_x'])
-						&& GeneralUtility::_GP('closeDoc') == 0
-					) {
-						$this->attachResultArrayToPageRenderer(
-							'RecordSavedPostProcessHook_processDatamap_afterAllOperations_' . $table . '_' . $uid,
-							$resultArray
-						);
-					} else {
-						$this->communicationService->storeBackendMessage($resultArray);
-					}
-				}
-			}
-		}
-		unset($table, $record);
-	}
+                if ($this->communicationService->displayBackendMessage()) {
+                    if (!isset($_POST['_saveandclosedok_x'])
+                        && !isset($_POST['_translation_savedok_x'])
+                        && GeneralUtility::_GP('closeDoc') == 0
+                    ) {
+                        $this->attachResultArrayToPageRenderer(
+                            'RecordSavedPostProcessHook_processDatamap_afterAllOperations_' . $table . '_' . $uid,
+                            $resultArray
+                        );
+                    } else {
+                        $this->communicationService->storeBackendMessage($resultArray);
+                    }
+                }
+            }
+        }
+        unset($table, $record);
+    }
 }
 
 ?>

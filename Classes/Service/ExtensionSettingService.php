@@ -33,30 +33,33 @@ use TYPO3\CMS\Core\SingletonInterface;
  * @package TYPO3
  * @subpackage vcc
  */
-class ExtensionSettingService implements SingletonInterface {
+class ExtensionSettingService implements SingletonInterface
+{
 
-	const extensionKey = 'vcc';
+    const extensionKey = 'vcc';
 
-	/**
-	 * @var array
-	 */
-	protected $configuration = array();
+    /**
+     * @var array
+     */
+    protected $configuration = array();
 
-	/**
-	 * Initialize the object
-	 */
-	public function __construct() {
-		$this->configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][self::extensionKey]);
-	}
+    /**
+     * Initialize the object
+     */
+    public function __construct()
+    {
+        $this->configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][self::extensionKey]);
+    }
 
-	/**
-	 * Returns the configuration
-	 *
-	 * @return array
-	 */
-	public function getConfiguration() {
-		return $this->configuration;
-	}
+    /**
+     * Returns the configuration
+     *
+     * @return array
+     */
+    public function getConfiguration()
+    {
+        return $this->configuration;
+    }
 }
 
 ?>

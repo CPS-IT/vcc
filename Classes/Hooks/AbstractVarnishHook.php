@@ -37,88 +37,94 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package TYPO3
  * @subpackage vcc
  */
-abstract class AbstractVarnishHook {
+abstract class AbstractVarnishHook
+{
 
-	/**
-	 * @var CommunicationService|NULL
-	 */
-	protected $communicationService = NULL;
+    /**
+     * @var CommunicationService|NULL
+     */
+    protected $communicationService = null;
 
-	/**
-	 * @var TsConfigService|NULL
-	 */
-	protected $tsConfigService = NULL;
+    /**
+     * @var TsConfigService|NULL
+     */
+    protected $tsConfigService = null;
 
-	/**
-	 * Initialize the object
-	 */
-	public function __construct() {
-		$communicationService = GeneralUtility::makeInstance(CommunicationService::class);
-		$this->injectCommunicationService($communicationService);
+    /**
+     * Initialize the object
+     */
+    public function __construct()
+    {
+        $communicationService = GeneralUtility::makeInstance(CommunicationService::class);
+        $this->injectCommunicationService($communicationService);
 
-		$tsConfigService = GeneralUtility::makeInstance(TsConfigService::class);
-		$this->injectTsConfigService($tsConfigService);
-	}
+        $tsConfigService = GeneralUtility::makeInstance(TsConfigService::class);
+        $this->injectTsConfigService($tsConfigService);
+    }
 
-	/**
-	 * Injects the communication service
-	 *
-	 * @param \CPSIT\Vcc\Service\CommunicationService $communicationService
-	 * @return void
-	 */
-	protected function injectCommunicationService(CommunicationService $communicationService) {
-		$this->communicationService = $communicationService;
-	}
+    /**
+     * Injects the communication service
+     *
+     * @param \CPSIT\Vcc\Service\CommunicationService $communicationService
+     * @return void
+     */
+    protected function injectCommunicationService(CommunicationService $communicationService)
+    {
+        $this->communicationService = $communicationService;
+    }
 
-	/**
-	 * Injects the TSConfig service
-	 *
-	 * @param \CPSIT\Vcc\Service\TsConfigService $tsConfigService
-	 * @return void
-	 */
-	protected function injectTsConfigService(TsConfigService $tsConfigService) {
-		$this->tsConfigService = $tsConfigService;
-	}
+    /**
+     * Injects the TSConfig service
+     *
+     * @param \CPSIT\Vcc\Service\TsConfigService $tsConfigService
+     * @return void
+     */
+    protected function injectTsConfigService(TsConfigService $tsConfigService)
+    {
+        $this->tsConfigService = $tsConfigService;
+    }
 
-	/**
-	 * Checks if the button could be inserted
-	 *
-	 * @param int $pageId
-	 * @param string $table
-	 * @return bool
-	 */
-	protected function isHookAccessible($pageId, $table) {
-		$access = FALSE;
+    /**
+     * Checks if the button could be inserted
+     *
+     * @param int $pageId
+     * @param string $table
+     * @return bool
+     */
+    protected function isHookAccessible($pageId, $table)
+    {
+        $access = false;
 
-		// Check edit rights for page as cache can be flushed then only
-		if ($table === 'pages') {
-			$permsClause = $GLOBALS['BE_USER']->getPagePermsClause(2);
-		} else {
-			$permsClause = $GLOBALS['BE_USER']->getPagePermsClause(16);
-		}
-		$pageinfo = BackendUtility::readPageAccess($pageId, $permsClause);
-		if ($pageinfo !== FALSE) {
-			// Get TSconfig for extension
-			$tsConfig = $this->tsConfigService->getConfiguration($pageId);
-			if (isset($tsConfig[$table]) && !empty($tsConfig[$table])) {
-				$access = TRUE;
-			}
-		}
+        // Check edit rights for page as cache can be flushed then only
+        if ($table === 'pages') {
+            $permsClause = $GLOBALS['BE_USER']->getPagePermsClause(2);
+        } else {
+            $permsClause = $GLOBALS['BE_USER']->getPagePermsClause(16);
+        }
+        $pageinfo = BackendUtility::readPageAccess($pageId, $permsClause);
+        if ($pageinfo !== false) {
+            // Get TSconfig for extension
+            $tsConfig = $this->tsConfigService->getConfiguration($pageId);
+            if (isset($tsConfig[$table]) && !empty($tsConfig[$table])) {
+                $access = true;
+            }
+        }
 
-		return $access;
-	}
+        return $access;
+    }
 
-	/**
-	 * @param string $name
-	 * @param array $resultArray
-	 * @return void
-	 */
-	protected function attachResultArrayToPageRenderer($name, $resultArray) {
-		$message = $this->communicationService->generateBackendMessage($resultArray, FALSE);
-		/** @var \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer */
-		$pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-		$pageRenderer->addJsInlineCode($name, $message);
-	}
+    /**
+     * @param string $name
+     * @param array $resultArray
+     * @return void
+     */
+    protected function attachResultArrayToPageRenderer($name, $resultArray)
+    {
+        $message = $this->communicationService->generateBackendMessage($resultArray, false);
+        /** @var \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer */
+        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+        $pageRenderer->addJsInlineCode($name, $message);
+    }
 }
 
 ?>
