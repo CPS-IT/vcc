@@ -444,7 +444,7 @@ class CommunicationService implements SingletonInterface
                 $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
                 $pageRenderer->setLanguage($GLOBALS['LANG']->lang);
             }
-            $GLOBALS['TSFE']->newcObj();
+            $GLOBALS['TSFE']->newCObj();
 
             Page\PageGenerator::pagegenInit();
         } catch (Http\PageNotFoundException $e) {
