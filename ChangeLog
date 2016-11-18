@@ -1,3 +1,6 @@
+2016-11-18         [RELEASE] Release of master 3.0.1 (Nicole Cordes)
+2016-11-18 eec2e20 [HOTFIX] Care about PageRenderer->backPath (Nicole Cordes)
+
 2016-10-13         [RELEASE] Release of master 3.0.0 (Nicole Cordes)
 2016-07-21 55fd990 [TASK] Use correct function call (Nicole Cordes)
 2016-03-03 9b15164 [TASK] Use ::class instead of strings (Nicole Cordes)
