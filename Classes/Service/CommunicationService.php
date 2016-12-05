@@ -426,11 +426,14 @@ class CommunicationService implements SingletonInterface
             $GLOBALS['TT'] = GeneralUtility::makeInstance(NullTimeTracker::class);
         }
 
-        // The initialization of the TypoScriptFrontendController sets a new backPath in the PageRenderer
-        // As PageRenderer is a singleton this value is used for further backend processing
-        // We need to store the old value and reset it afterwards
-        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-        $backPath = $pageRenderer->backPath;
+        $backPath = null;
+        if (version_compare(TYPO3_version, '8', '<')) {
+            // The initialization of the TypoScriptFrontendController sets a new backPath in the PageRenderer
+            // As PageRenderer is a singleton this value is used for further backend processing
+            // We need to store the old value and reset it afterwards
+            $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+            $backPath = $pageRenderer->backPath;
+        }
 
         $TYPO3_CONF_VARS = $GLOBALS['TYPO3_CONF_VARS'];
         $TYPO3_CONF_VARS['FE']['pageNotFound_handling'] = false;
@@ -459,7 +462,10 @@ class CommunicationService implements SingletonInterface
             return false;
         }
 
-        $pageRenderer->setBackPath($backPath);
+        // This restores the backPath in TYPO3 version < 8
+        if ($backPath !== null) {
+            $pageRenderer->setBackPath($backPath);
+        }
 
         return true;
     }
