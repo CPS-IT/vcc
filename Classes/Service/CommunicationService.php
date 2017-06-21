@@ -426,6 +426,7 @@ class CommunicationService implements SingletonInterface
             $GLOBALS['TT'] = GeneralUtility::makeInstance(NullTimeTracker::class);
         }
 
+        $pageRenderer = null;
         $backPath = null;
         if (version_compare(TYPO3_version, '8', '<')) {
             // The initialization of the TypoScriptFrontendController sets a new backPath in the PageRenderer
@@ -441,6 +442,10 @@ class CommunicationService implements SingletonInterface
         $TYPO3_CONF_VARS['FE']['pageNotFoundOnCHashError'] = false;
         $GLOBALS['TSFE'] = GeneralUtility::makeInstance(TypoScriptFrontendController::class, $TYPO3_CONF_VARS, $id, 0);
         $GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(Page\PageRepository::class);
+        if ($pageRenderer instanceof PageRenderer) {
+            // This restores the backPath in TYPO3 version < 8
+            $pageRenderer->setBackPath($backPath);
+        }
         try {
             $GLOBALS['TSFE']->initFEuser();
             $GLOBALS['TSFE']->initUserGroups();
@@ -460,11 +465,6 @@ class CommunicationService implements SingletonInterface
             return false;
         } catch (Http\ServiceUnavailableException $e) {
             return false;
-        }
-
-        // This restores the backPath in TYPO3 version < 8
-        if ($backPath !== null) {
-            $pageRenderer->setBackPath($backPath);
         }
 
         return true;
