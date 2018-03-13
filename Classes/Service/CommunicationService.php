@@ -426,11 +426,15 @@ class CommunicationService implements SingletonInterface
             $GLOBALS['TT'] = GeneralUtility::makeInstance(NullTimeTracker::class);
         }
 
-        // The initialization of the TypoScriptFrontendController sets a new backPath in the PageRenderer
-        // As PageRenderer is a singleton this value is used for further backend processing
-        // We need to store the old value and reset it afterwards
-        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-        $backPath = $pageRenderer->backPath;
+        $pageRenderer = null;
+        $backPath = null;
+        if (version_compare(TYPO3_version, '8', '<')) {
+            // The initialization of the TypoScriptFrontendController sets a new backPath in the PageRenderer
+            // As PageRenderer is a singleton this value is used for further backend processing
+            // We need to store the old value and reset it afterwards
+            $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+            $backPath = $pageRenderer->backPath;
+        }
 
         $TYPO3_CONF_VARS = $GLOBALS['TYPO3_CONF_VARS'];
         $TYPO3_CONF_VARS['FE']['pageNotFound_handling'] = false;
@@ -438,6 +442,10 @@ class CommunicationService implements SingletonInterface
         $TYPO3_CONF_VARS['FE']['pageNotFoundOnCHashError'] = false;
         $GLOBALS['TSFE'] = GeneralUtility::makeInstance(TypoScriptFrontendController::class, $TYPO3_CONF_VARS, $id, 0);
         $GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(Page\PageRepository::class);
+        if ($pageRenderer instanceof PageRenderer) {
+            // This restores the backPath in TYPO3 version < 8
+            $pageRenderer->setBackPath($backPath);
+        }
         try {
             $GLOBALS['TSFE']->initFEuser();
             $GLOBALS['TSFE']->initUserGroups();
@@ -458,8 +466,6 @@ class CommunicationService implements SingletonInterface
         } catch (Http\ServiceUnavailableException $e) {
             return false;
         }
-
-        $pageRenderer->setBackPath($backPath);
 
         return true;
     }
