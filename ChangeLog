@@ -1,7 +1,13 @@
-2016-11-18         [RELEASE] Release of master 3.0.1 (Nicole Cordes)
+2018-03-13         [RELEASE] Release of vcc 3.1.0 (Nicole Cordes)
+2018-03-13 01ebc2f [TASK] Raise compatibility to TYPO3 8.7 (Nicole Cordes)
+2017-06-21 619680a [BUGFIX] Enforce resetting PageRenderer->backPath in TYPO3 < 8 (Nicole Cordes)
+2017-06-20 0d32759 [TASK] Add Readme.md (Nicole Cordes)
+2016-12-05 64c374a [TASK] Raise compatibility to TYPO3 8.5 (Nicole Cordes)
+
+2016-11-18         [RELEASE] Release of vcc 3.0.1 (Nicole Cordes)
 2016-11-18 eec2e20 [HOTFIX] Care about PageRenderer->backPath (Nicole Cordes)
 
-2016-10-13         [RELEASE] Release of master 3.0.0 (Nicole Cordes)
+2016-10-13         [RELEASE] Release of vcc 3.0.0 (Nicole Cordes)
 2016-07-21 55fd990 [TASK] Use correct function call (Nicole Cordes)
 2016-03-03 9b15164 [TASK] Use ::class instead of strings (Nicole Cordes)
 2016-03-03 6b4dbae [TASK] Switch to psr-1/psr-2 coding standards (Nicole Cordes)
