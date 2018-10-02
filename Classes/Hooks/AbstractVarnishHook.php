@@ -34,25 +34,19 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * Adds the cache clear button to the edit form
  *
  * @author Nicole Cordes <cordes@cps-it.de>
- * @package TYPO3
- * @subpackage vcc
  */
 abstract class AbstractVarnishHook
 {
-
     /**
-     * @var CommunicationService|NULL
+     * @var CommunicationService
      */
     protected $communicationService = null;
 
     /**
-     * @var TsConfigService|NULL
+     * @var TsConfigService
      */
     protected $tsConfigService = null;
 
-    /**
-     * Initialize the object
-     */
     public function __construct()
     {
         $communicationService = GeneralUtility::makeInstance(CommunicationService::class);
@@ -62,23 +56,11 @@ abstract class AbstractVarnishHook
         $this->injectTsConfigService($tsConfigService);
     }
 
-    /**
-     * Injects the communication service
-     *
-     * @param \CPSIT\Vcc\Service\CommunicationService $communicationService
-     * @return void
-     */
     protected function injectCommunicationService(CommunicationService $communicationService)
     {
         $this->communicationService = $communicationService;
     }
 
-    /**
-     * Injects the TSConfig service
-     *
-     * @param \CPSIT\Vcc\Service\TsConfigService $tsConfigService
-     * @return void
-     */
     protected function injectTsConfigService(TsConfigService $tsConfigService)
     {
         $this->tsConfigService = $tsConfigService;
@@ -126,5 +108,3 @@ abstract class AbstractVarnishHook
         $pageRenderer->addJsInlineCode($name, $message);
     }
 }
-
-?>

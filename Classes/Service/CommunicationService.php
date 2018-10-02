@@ -25,6 +25,7 @@ namespace CPSIT\Vcc\Service;
  ***************************************************************/
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Error\Http;
 use TYPO3\CMS\Core\Messaging;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -33,45 +34,41 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Page;
-use TYPO3\CMS\Core\Error\Http;
 
 /**
  * Service to send the cache command to server
  *
  * @author Nicole Cordes <cordes@cps-it.de>
- * @package TYPO3
- * @subpackage vcc
  */
 class CommunicationService implements SingletonInterface
 {
-
     /**
-     * @var ContentObjectRenderer|NULL
+     * @var ContentObjectRenderer
      */
     protected $contentObject = null;
 
     /**
      * @var array
      */
-    protected $configuration = array();
+    protected $configuration = [];
 
     /**
-     * @var ExtensionSettingService|NULL
+     * @var ExtensionSettingService
      */
     protected $extensionSettingService = null;
 
     /**
      * @var array
      */
-    protected $hookObjects = array();
+    protected $hookObjects = [];
 
     /**
-     * @var LoggingService|NULL
+     * @var LoggingService
      */
     protected $loggingService = null;
 
     /**
-     * @var TsConfigService|NULL
+     * @var TsConfigService
      */
     protected $tsConfigService = null;
 
@@ -184,7 +181,7 @@ class CommunicationService implements SingletonInterface
      */
     public function displayBackendMessage()
     {
-        return ($this->configuration['loggingMode'] & LoggingService::MODE_DEBUG || $this->configuration['cacheControl'] === 'manual');
+        return $this->configuration['loggingMode'] & LoggingService::MODE_DEBUG || $this->configuration['cacheControl'] === 'manual';
     }
 
     /**
@@ -289,15 +286,15 @@ class CommunicationService implements SingletonInterface
     public function sendClearCacheCommandForFiles($fileName, $host = '', $quote = true)
     {
         // Log debug information
-        $logData = array(
+        $logData = [
             'fileName' => $fileName,
             'host' => $host,
-        );
+        ];
         $this->loggingService->debug('CommunicationService::sendClearCacheCommandForFiles arguments', $logData);
 
         // If no host was given get all
         if ($host === '') {
-            $hostArray = array();
+            $hostArray = [];
 
             // Get all domain records and check page access
             $domainArray = BackendUtility::getRecordsByField('sys_domain', 'redirectTo', '', ' AND hidden=0');
@@ -336,12 +333,12 @@ class CommunicationService implements SingletonInterface
         $record = BackendUtility::getRecord($table, $uid);
 
         foreach ($this->hookObjects as $hookObject) {
-            $params = array(
+            $params = [
                 'record' => &$record,
                 'table' => $table,
                 'uid' => $uid,
                 'host' => $host,
-            );
+            ];
             /** @var CommunicationServiceHookInterface $hookObject */
             $hookObject->sendClearCacheCommandForTablesGetRecord($params, $this);
         }
@@ -354,16 +351,16 @@ class CommunicationService implements SingletonInterface
         }
 
         // Log debug information
-        $logData = array(
+        $logData = [
             'table' => $table,
             'uid' => $uid,
             'host' => $host,
             'pid' => $pid,
-        );
+        ];
         $this->loggingService->debug('CommunicationService::sendClearCacheCommandForTables arguments', $logData, $pid);
 
         if (!$this->createTSFE($pid)) {
-            return array();
+            return [];
         }
         $tsConfig = $this->tsConfigService->getConfiguration($pid);
         $typolink = $tsConfig[$table . '.']['typolink.'];
@@ -389,7 +386,6 @@ class CommunicationService implements SingletonInterface
 
         // Process only for valid URLs
         if ($url !== '') {
-
             $url = $this->removeHost($url);
             $responseArray = $this->processClearCacheCommand($url, $pid, $host, $quote);
 
@@ -405,13 +401,13 @@ class CommunicationService implements SingletonInterface
             return $responseArray;
         }
 
-        return array(
-            array(
+        return [
+            [
                 'status' => Messaging\FlashMessage::ERROR,
-                'message' => array('No valid URL was generated.', 'table: ' . $table, 'uid: ' . $uid, 'host: ' . $host),
-                'requestHeader' => array($url),
-            ),
-        );
+                'message' => ['No valid URL was generated.', 'table: ' . $table, 'uid: ' . $uid, 'host: ' . $host],
+                'requestHeader' => [$url],
+            ],
+        ];
     }
 
     /**
@@ -481,23 +477,23 @@ class CommunicationService implements SingletonInterface
      */
     protected function processClearCacheCommand($url, $pageId, $host = '', $quote = true)
     {
-        $responseArray = array();
+        $responseArray = [];
 
         foreach ($this->hookObjects as $hookObject) {
-            $params = array(
+            $params = [
                 'url' => &$url,
                 'pageId' => $pageId,
                 'host' => $host,
-            );
+            ];
             /** @var CommunicationServiceHookInterface $hookObject */
             $hookObject->processClearCacheCommandGetUrl($params, $this);
         }
 
         $serverArray = GeneralUtility::trimExplode(',', $this->configuration['server'], 1);
         foreach ($serverArray as $server) {
-            $response = array(
+            $response = [
                 'server' => $server,
-            );
+            ];
 
             // Build request
             if ($this->configuration['stripSlash'] && $url !== '/') {
@@ -513,7 +509,7 @@ class CommunicationService implements SingletonInterface
                 $response['message'] = 'No curl_init available';
             } else {
                 // If no host was given we need to loop over all
-                $hostArray = array();
+                $hostArray = [];
                 if ($host !== '') {
                     $hostArray = GeneralUtility::trimExplode(',', $host, 1);
                 } else {
@@ -561,7 +557,7 @@ class CommunicationService implements SingletonInterface
                     curl_setopt($ch, CURLOPT_HTTP_VERSION, ($httpProtocol === 'http_10') ? CURL_HTTP_VERSION_1_0 : CURL_HTTP_VERSION_1_1);
 
                     // Set X-Host header
-                    $headerArray = array();
+                    $headerArray = [];
                     $headerArray[] = 'X-Host: ' . (($quote) ? preg_quote($xHost) : $xHost);
                     curl_setopt($ch, CURLOPT_HTTPHEADER, $headerArray);
 
@@ -569,13 +565,13 @@ class CommunicationService implements SingletonInterface
                     curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
 
                     // Include preProcess hook (e.g. to set some alternative curl options
-                    $params = array(
+                    $params = [
                         'host' => $xHost,
                         'pageId' => $pageId,
                         'quote' => $quote,
                         'server' => $server,
                         'url' => $url,
-                    );
+                    ];
                     foreach ($this->hookObjects as $hookObject) {
                         /** @var CommunicationServiceHookInterface $hookObject */
                         $hookObject->processClearCacheCommandPreProcess($params, $ch, $request, $response, $this);
@@ -588,7 +584,7 @@ class CommunicationService implements SingletonInterface
                         $response['message'] = preg_split('/(\r|\n)+/m', trim($header));
                     } else {
                         $response['status'] = Messaging\FlashMessage::ERROR;
-                        $response['message'] = array(curl_error($ch));
+                        $response['message'] = [curl_error($ch)];
                     }
                     $response['requestHeader'] = preg_split('/(\r|\n)+/m', trim(curl_getinfo($ch, CURLINFO_HEADER_OUT)));
 
@@ -602,12 +598,12 @@ class CommunicationService implements SingletonInterface
                     curl_close($ch);
 
                     // Log debug information
-                    $logData = array(
+                    $logData = [
                         'url' => $url,
                         'pageId' => $pageId,
                         'host' => $host,
                         'response' => $response,
-                    );
+                    ];
                     $logType = ($response['status'] == Messaging\FlashMessage::OK) ? LoggingService::OK : LoggingService::ERROR;
                     $this->loggingService->log('CommunicationService::processClearCacheCommand', $logData, $logType, $pageId, 3);
 
@@ -637,5 +633,3 @@ class CommunicationService implements SingletonInterface
         return $url;
     }
 }
-
-?>

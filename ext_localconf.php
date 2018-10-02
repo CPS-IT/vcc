@@ -20,7 +20,7 @@ if (TYPO3_MODE === 'BE') {
 
     // Initialize array for internal hooks
     if (!isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vcc']['hooks']['communicationService'])) {
-        $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vcc']['hooks']['communicationService'] = array();
+        $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vcc']['hooks']['communicationService'] = [];
     }
 }
 

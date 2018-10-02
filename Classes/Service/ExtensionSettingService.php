@@ -30,18 +30,15 @@ use TYPO3\CMS\Core\SingletonInterface;
  * Service to handle extension settings
  *
  * @author Nicole Cordes <cordes@cps-it.de>
- * @package TYPO3
- * @subpackage vcc
  */
 class ExtensionSettingService implements SingletonInterface
 {
-
     const extensionKey = 'vcc';
 
     /**
      * @var array
      */
-    protected $configuration = array();
+    protected $configuration = [];
 
     /**
      * Initialize the object
@@ -61,5 +58,3 @@ class ExtensionSettingService implements SingletonInterface
         return $this->configuration;
     }
 }
-
-?>

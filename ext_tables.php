@@ -8,9 +8,9 @@ $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(TYPO3\CMS\C
 $iconRegistry->registerIcon(
     'vcc-clearVarnishCache',
     \TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider::class,
-    array(
+    [
         'source' => 'EXT:vcc/Resources/Public/Icons/CachePlugin.png',
-    )
+    ]
 );
 
 // Add default module settings

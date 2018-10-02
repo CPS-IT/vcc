@@ -32,19 +32,16 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * Service to handle TSConfig settings
  *
  * @author Nicole Cordes <cordes@cps-it.de>
- * @package TYPO3
- * @subpackage vcc
  */
 class TsConfigService implements SingletonInterface
 {
-
     /**
      * @var array
      */
-    protected $configurationArray = array();
+    protected $configurationArray = [];
 
     /**
-     * @var LoggingService|NULL
+     * @var LoggingService
      */
     protected $loggingService = null;
 
@@ -81,15 +78,13 @@ class TsConfigService implements SingletonInterface
             $this->configurationArray[$id] = $modTsConfig['properties'];
 
             // Log debug information
-            $logData = array(
+            $logData = [
                 'id' => $id,
                 'configuration' => $modTsConfig['properties'],
-            );
+            ];
             $this->loggingService->debug('TsConfigService::getConfiguration id: ' . $id, $logData);
         }
 
         return $this->configurationArray[$id];
     }
 }
-
-?>
