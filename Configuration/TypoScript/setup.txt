@@ -1,0 +1,19 @@
+plugin.tx_vcc {
+    settings {
+        typeNum = {$plugin.tx_vcc.settings.typeNum}
+    }
+}
+
+vcc = PAGE
+vcc {
+    typeNum < plugin.tx_vcc.settings.typeNum
+
+    config {
+        disableAllHeaderCode = 1
+        sendCacheHeaders = 0
+        no_cache = 1
+    }
+
+    10 = USER
+    10.userFunc = CPSIT\Vcc\Renderer\EsiRenderer->render
+}

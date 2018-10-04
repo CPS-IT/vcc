@@ -15,7 +15,10 @@
         "typo3-ter/vcc": "self.version"
     },
     "require": {
-        "typo3/cms-core": "^7.6 || ^8.7"
+        "typo3/cms-backend": "^7.6 || ^8.7",
+        "typo3/cms-core": "^7.6 || ^8.7",
+        "typo3/cms-extbase": "^7.6 || ^8.7",
+        "typo3/cms-frontend": "^7.6 || ^8.7"
     },
     "autoload": {
         "psr-4": {
