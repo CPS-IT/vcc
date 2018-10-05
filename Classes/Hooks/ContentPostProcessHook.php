@@ -92,9 +92,10 @@ class ContentPostProcessHook
         foreach ($this->typoScriptFrontendController->config['INTincScript'] as $identifier => $configuration) {
             $matches = [];
             if (preg_match('/<!--\s*' . preg_quote($identifier) . '\s*-->/i', $content, $matches)) {
-                $cacheIdentifier = str_replace('INT_SCRIPT.', '', $identifier);
+                $cacheIdentifier = md5(json_encode($configuration) . $cacheTag);
                 $this->esiCache->set($cacheIdentifier, $configuration, [$cacheTag]);
 
+                $addQueryStringMethod = $this->typoScriptFrontendController->cHash ? 'GET' : '';
                 $link = $contentObjectRenderer->typoLink_URL(
                     [
                         'parameter' => implode(',', [
@@ -103,7 +104,7 @@ class ContentPostProcessHook
                         ]),
                         'forceAbsoluteUrl' => 1,
                         'addQueryString.' => [
-                            'method' => 'GET',
+                            'method' => $addQueryStringMethod,
                         ],
                         'additionalParams' => '&tx_vcc[identifier]=' . $this->hashService->appendHmac($cacheIdentifier),
                         'useCacheHash' => 1,
