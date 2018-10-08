@@ -10,8 +10,6 @@ vcc {
 
     config {
         disableAllHeaderCode = 1
-        sendCacheHeaders = 0
-        no_cache = 1
     }
 
     10 = USER

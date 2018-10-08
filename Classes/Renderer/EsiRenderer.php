@@ -29,6 +29,7 @@ use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Security\Cryptography\HashService;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class EsiRenderer
 {
@@ -47,14 +48,21 @@ class EsiRenderer
      */
     protected $hashService;
 
+    /**
+     * @var TypoScriptFrontendController
+     */
+    protected $typoScriptFrontendController;
+
     public function __construct(
         FrontendInterface $esiCache = null,
         HashService $hashService = null,
-        IntScriptRenderer $intScriptRenderer = null
+        IntScriptRenderer $intScriptRenderer = null,
+        TypoScriptFrontendController $typoScriptFrontendController = null
     ) {
         $this->esiCache = $esiCache ?: GeneralUtility::makeInstance(CacheManager::class)->getCache('tx_vcc_esi');
         $this->intScriptRenderer = $intScriptRenderer ?: GeneralUtility::makeInstance(IntScriptRenderer::class);
         $this->hashService = $hashService ?: GeneralUtility::makeInstance(HashService::class);
+        $this->typoScriptFrontendController = $typoScriptFrontendController ?: $GLOBALS['TSFE'];
     }
 
     public function render()
@@ -67,6 +75,11 @@ class EsiRenderer
         $cacheIdentifier = $this->hashService->validateAndStripHmac($arguments['identifier']);
 
         $configuration = $this->esiCache->get($cacheIdentifier) ?: [];
+        if (!empty($configuration['conf']['cache_timeout'])) {
+            $this->typoScriptFrontendController->page['cache_timeout'] = $configuration['conf']['cache_timeout'];
+        } else {
+            $this->typoScriptFrontendController->set_no_cache('ESI response is non-cacheable by default');
+        }
 
         return $this->intScriptRenderer->render($configuration);
     }
