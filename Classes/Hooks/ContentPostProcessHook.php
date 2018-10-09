@@ -76,7 +76,9 @@ class ContentPostProcessHook
     public function replaceIntScripts(array $parameter)
     {
         $this->typoScriptFrontendController = $parameter['pObj'];
-        if (empty($this->typoScriptFrontendController->config['INTincScript'])) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST'
+            || empty($this->typoScriptFrontendController->config['INTincScript'])
+        ) {
             return;
         }
 
