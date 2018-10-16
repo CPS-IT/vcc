@@ -24,3 +24,9 @@ enableIndexScript = 0
 
 # cat=esi; type=boolean; label=ESI support: Enable ESI rendering for non-cachable page parts.
 esiSupport = 0
+
+# cat=esi; type=string; label=Page not found header: Header that is sent if an ESI request identifier is not found.
+pageNotFoundHeader = HTTP/1.0 404 Not Found
+
+# cat=esi; type=int+; label=Page not found response code: HTTP status code that is sent if an ESI request identifier is not found.
+pageNotFoundCode = 404

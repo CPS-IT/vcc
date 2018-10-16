@@ -25,6 +25,7 @@ namespace CPSIT\Vcc\Renderer;
  ***************************************************************/
 
 use CPSIT\Vcc\Exception\Exception;
+use CPSIT\Vcc\Service\ExtensionSettingService;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -37,6 +38,11 @@ class EsiRenderer
      * @var FrontendInterface
      */
     protected $esiCache;
+
+    /**
+     * @var ExtensionSettingService
+     */
+    private $extensionSettingService;
 
     /**
      * @var IntScriptRenderer
@@ -55,11 +61,13 @@ class EsiRenderer
 
     public function __construct(
         FrontendInterface $esiCache = null,
+        ExtensionSettingService $extensionSettingService = null,
         HashService $hashService = null,
         IntScriptRenderer $intScriptRenderer = null,
         TypoScriptFrontendController $typoScriptFrontendController = null
     ) {
         $this->esiCache = $esiCache ?: GeneralUtility::makeInstance(CacheManager::class)->getCache('tx_vcc_esi');
+        $this->extensionSettingService = $extensionSettingService ?: GeneralUtility::makeInstance(ExtensionSettingService::class);
         $this->intScriptRenderer = $intScriptRenderer ?: GeneralUtility::makeInstance(IntScriptRenderer::class);
         $this->hashService = $hashService ?: GeneralUtility::makeInstance(HashService::class);
         $this->typoScriptFrontendController = $typoScriptFrontendController ?: $GLOBALS['TSFE'];
@@ -74,7 +82,14 @@ class EsiRenderer
 
         $cacheIdentifier = $this->hashService->validateAndStripHmac($arguments['identifier']);
 
-        $configuration = $this->esiCache->get($cacheIdentifier) ?: [];
+        $configuration = $this->esiCache->get($cacheIdentifier);
+
+        if (empty($configuration)) {
+            $this->setPageNotFound();
+
+            return '';
+        }
+
         if (!empty($configuration['conf']['cache_timeout'])) {
             $this->typoScriptFrontendController->page['cache_timeout'] = $configuration['conf']['cache_timeout'];
         } else {
@@ -82,5 +97,21 @@ class EsiRenderer
         }
 
         return $this->intScriptRenderer->render($configuration);
+    }
+
+    protected function setPageNotFound()
+    {
+        $configuration = $this->extensionSettingService->getConfiguration();
+        $this->typoScriptFrontendController->set_no_cache('No ESI configuration found');
+        if (empty($this->typoScriptFrontendController->config['config']['additionalHeaders.'])) {
+            $this->typoScriptFrontendController->config['config']['additionalHeaders.'] = [];
+        }
+        $this->typoScriptFrontendController->config['config']['additionalHeaders.'] += [
+            [
+                'header' => $configuration['pageNotFoundHeader'],
+                'httpResponseCode' => (int)$configuration['pageNotFoundCode'],
+                'replace' => '1',
+            ],
+        ];
     }
 }
