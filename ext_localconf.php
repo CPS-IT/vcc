@@ -1,27 +1,24 @@
 <?php
 if (!defined('TYPO3_MODE')) {
-    die ('Access denied.');
+    die('Access denied.');
 }
 
-if (TYPO3_MODE === 'BE') {
+call_user_func(function () {
     $extensionConfiguration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['vcc']);
 
-    if ($extensionConfiguration['cacheControl'] === 'manual') {
-        // Register hook to add the cache clear button to configured items in different views
-        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['Backend\Template\Components\ButtonBar']['getButtonsHook']['vcc'] =
-            \CPSIT\Vcc\Hooks\ClearCacheIconHook::class . '->addButton';
-    } elseif ($extensionConfiguration['cacheControl'] === 'automatic') {
-        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['vcc'] =
-            \CPSIT\Vcc\Hooks\RecordSavedPostProcessHook::class;
+    if (!empty($extensionConfiguration['esiSupport'])) {
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_fe.php']['contentPostProc-all']['vcc'] =
+            \CPSIT\Vcc\Hooks\ContentPostProcessHook::class . '->replaceIntScripts';
 
-        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc']['vcc'] =
-            \CPSIT\Vcc\Hooks\ClearCachePostProcessHook::class . '->clearCacheByCommand';
+        // Register cache frontend for proxy class generation
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['tx_vcc_esi'] = [
+            'frontend' => \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend::class,
+            'backend' => \TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend::class,
+            'options' => [
+                'compression' => true,
+                'defaultLifetime' => 864000, // 10 days
+            ],
+            'groups' => ['system'],
+        ];
     }
-
-    // Initialize array for internal hooks
-    if (!isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vcc']['hooks']['communicationService'])) {
-        $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vcc']['hooks']['communicationService'] = array();
-    }
-}
-
-?>
+});

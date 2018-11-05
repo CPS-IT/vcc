@@ -1,0 +1,36 @@
+{
+    "name": "cpsit/vcc",
+    "description": "Varnish cache tools for TYPO3. Supports ESI tags and cache control.",
+    "type": "typo3-cms-extension",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Nicole Cordes",
+            "email": "cordes@cps-it.de",
+            "role": "Developer"
+        }
+    ],
+    "replace": {
+        "vcc": "self.version",
+        "typo3-ter/vcc": "self.version"
+    },
+    "require": {
+        "typo3/cms-backend": "^7.6 || ^8.7",
+        "typo3/cms-core": "^7.6 || ^8.7",
+        "typo3/cms-extbase": "^7.6 || ^8.7",
+        "typo3/cms-frontend": "^7.6 || ^8.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "CPSIT\\Vcc\\": "Classes/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "4.x-dev"
+        },
+        "typo3/cms": {
+            "extension-key": "vcc"
+        }
+    }
+}

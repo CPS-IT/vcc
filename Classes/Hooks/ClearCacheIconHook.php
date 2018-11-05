@@ -36,21 +36,18 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * Adds the cache clear button to the edit form
  *
  * @author Nicole Cordes <cordes@cps-it.de>
- * @package TYPO3
- * @subpackage vcc
  */
 class ClearCacheIconHook extends AbstractVarnishHook
 {
-
     /**
-     * @var DocumentTemplate|NULL
+     * @var DocumentTemplate
      */
     protected $pObj = null;
 
     /**
      * @var array
      */
-    protected $params = array();
+    protected $params = [];
 
     /**
      * @param array $params
@@ -61,13 +58,13 @@ class ClearCacheIconHook extends AbstractVarnishHook
     {
         $moduleName = GeneralUtility::_GP('M');
         $route = GeneralUtility::_GP('route');
-        if (!in_array($moduleName, array('web_layout', 'web_list'), true) && $route !== '/record/edit') {
+        if (!in_array($moduleName, ['web_layout', 'web_list'], true) && $route !== '/record/edit') {
             return $params['buttons'];
         }
 
         $table = '';
-        $record = array();
-        if (in_array($moduleName, array('web_layout', 'web_list'), true)) {
+        $record = [];
+        if (in_array($moduleName, ['web_layout', 'web_list'], true)) {
             $table = 'pages';
             $id = GeneralUtility::_GP('id');
             if (is_object($GLOBALS['SOBE']) && (int)$GLOBALS['SOBE']->current_sys_language) {
@@ -77,10 +74,10 @@ class ClearCacheIconHook extends AbstractVarnishHook
                     $record = $record[0];
                 }
             } else {
-                $record = array(
+                $record = [
                     'uid' => $id,
                     'pid' => $id,
-                );
+                ];
             }
         } else {
             $editConf = GeneralUtility::_GP('edit');
@@ -94,15 +91,14 @@ class ClearCacheIconHook extends AbstractVarnishHook
                 $recordUid = key($editConf[$table]);
                 // If table is pages we need uid (as pid) to get TSconfig
                 if ($table === 'pages') {
-                    $record = array(
+                    $record = [
                         'uid' => $recordUid,
                         'pid' => $recordUid,
-                    );
+                    ];
                 } else {
                     $record = BackendUtility::getRecord($table, $recordUid, 'uid, pid');
                 }
             }
-
         }
 
         if (isset($record['pid']) && $record['pid'] > 0) {
@@ -117,16 +113,16 @@ class ClearCacheIconHook extends AbstractVarnishHook
                     ->setIcon($iconFactory->getIcon('vcc-clearVarnishCache', Icon::SIZE_SMALL))
                     ->setTitle('Clear Varnish cache');
                 if (!empty($moduleName)) {
-                    $varnishButton->setHref(BackendUtility::getModuleUrl($moduleName, array(
+                    $varnishButton->setHref(BackendUtility::getModuleUrl($moduleName, [
                         'id' => $record['pid'],
                         'processVarnishRequest' => 1,
-                    )));
+                    ]));
                 } else {
-                    $varnishButton->setHref(BackendUtility::getModuleUrl('record_edit', array(
+                    $varnishButton->setHref(BackendUtility::getModuleUrl('record_edit', [
                         'edit' => GeneralUtility::_GP('edit'),
                         'returnUrl' => GeneralUtility::_GP('returnUrl'),
                         'processVarnishRequest' => 1,
-                    )));
+                    ]));
                 }
                 $params['buttons']['left'][99][] = $varnishButton;
             }
@@ -153,5 +149,3 @@ class ClearCacheIconHook extends AbstractVarnishHook
         return $string;
     }
 }
-
-?>

@@ -31,12 +31,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * Clears caches after a record was saved
  *
  * @author Nicole Cordes <cordes@cps-it.de>
- * @package TYPO3
- * @subpackage vcc
  */
 class RecordSavedPostProcessHook extends AbstractVarnishHook
 {
-
     /**
      * @param DataHandler $parentObject
      * @return void
@@ -75,5 +72,3 @@ class RecordSavedPostProcessHook extends AbstractVarnishHook
         unset($table, $record);
     }
 }
-
-?>

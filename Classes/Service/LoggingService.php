@@ -31,12 +31,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * Service to log requests and responses
  *
  * @author Nicole Cordes <cordes@cps-it.de>
- * @package TYPO3
- * @subpackage vcc
  */
 class LoggingService implements SingletonInterface
 {
-
     const MODE_DISABLED = 0;
     const MODE_MINIMAL = 1;
     const MODE_DEBUG = 2;
@@ -49,7 +46,7 @@ class LoggingService implements SingletonInterface
     const WARNING = 3;
 
     /**
-     * @var ExtensionSettingService|NULL
+     * @var ExtensionSettingService
      */
     protected $extensionSettingService = null;
 
@@ -102,7 +99,7 @@ class LoggingService implements SingletonInterface
      * @param null $caller
      * @return void
      */
-    public function debug($message, $logData = array(), $pid = 0, $callerDepth = 2, $caller = null)
+    public function debug($message, $logData = [], $pid = 0, $callerDepth = 2, $caller = null)
     {
         if ($this->loggingMode & self::MODE_DEBUG) {
             // Adjust callerDepth due to debug function
@@ -119,7 +116,7 @@ class LoggingService implements SingletonInterface
      * @param int $callerDepth
      * @param null $caller
      */
-    public function log($message, $logData = array(), $type = self::INFO, $pid = 0, $callerDepth = 2, $caller = null)
+    public function log($message, $logData = [], $type = self::INFO, $pid = 0, $callerDepth = 2, $caller = null)
     {
         if ($this->loggingMode & self::MODE_MINIMAL) {
             // Get caller if not already set
@@ -127,7 +124,7 @@ class LoggingService implements SingletonInterface
                 $caller = $this->getCallerFromBugtrace($callerDepth);
             }
 
-            $insertArray = array(
+            $insertArray = [
                 'pid' => $pid,
                 'tstamp' => time(),
                 'be_user' => $GLOBALS['BE_USER']->user['uid'],
@@ -136,7 +133,7 @@ class LoggingService implements SingletonInterface
                 'log_data' => serialize($logData),
                 'caller' => serialize($caller),
                 'hash' => $this->hash,
-            );
+            ];
             $GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_vcc_log', $insertArray);
 
             // Remove old entries
@@ -163,8 +160,6 @@ class LoggingService implements SingletonInterface
             return $trace[$callerDepth];
         }
 
-        return array();
+        return [];
     }
 }
-
-?>

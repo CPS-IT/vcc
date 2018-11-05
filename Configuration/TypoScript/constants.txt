@@ -1,0 +1,6 @@
+plugin.tx_vcc {
+    settings {
+        # cat=plugin.tx_vcc/links/10; type=int; label=LLL:EXT:vcc/Resources/Private/Language/locallang_be.xlf:constants.typenum
+        typeNum = 2233
+    }
+}

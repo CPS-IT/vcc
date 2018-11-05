@@ -1,10 +1,10 @@
 <?php
-namespace CPSIT\Vcc\Service;
+namespace CPSIT\Vcc\Exception;
 
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2012 Nicole Cordes <cordes@cps-it.de>
+ *  (c) 2018 Nicole Cordes <cordes@cps-it.de>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -23,38 +23,6 @@ namespace CPSIT\Vcc\Service;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
-use TYPO3\CMS\Core\SingletonInterface;
-
-/**
- * Service to handle extension settings
- *
- * @author Nicole Cordes <cordes@cps-it.de>
- */
-class ExtensionSettingService implements SingletonInterface
+class Exception extends \TYPO3\CMS\Core\Error\Exception
 {
-    const extensionKey = 'vcc';
-
-    /**
-     * @var array
-     */
-    protected $configuration = [];
-
-    /**
-     * Initialize the object
-     */
-    public function __construct()
-    {
-        $this->configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][self::extensionKey]);
-    }
-
-    /**
-     * Returns the configuration
-     *
-     * @return array
-     */
-    public function getConfiguration()
-    {
-        return $this->configuration;
-    }
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0" xmlns:t3="http://typo3.org/schemas/xliff">
+    <file source-language="en" datatype="plaintext" original="messages" date="2018-10-04T12:29:23Z" product-name="vcc">
+        <header />
+        <body>
+            <trans-unit id="constants.typenum">
+                <source>Page TypeNum for ESI rendering</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
