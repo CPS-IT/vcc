@@ -24,6 +24,8 @@ namespace CPSIT\Vcc\Renderer;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 class IntScriptRenderer
@@ -61,6 +63,14 @@ class IntScriptRenderer
                 break;
         }
 
-        return $content;
+        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+        $pageRenderer->setTemplateFile('EXT:vcc/Resources/Private/Templates/PageRenderer.html');
+        $page = $pageRenderer->render(PageRenderer::PART_HEADER);
+        $page .= $content;
+        // The PageRenderer gets reset after render, so the template must be reassigned
+        $pageRenderer->setTemplateFile('EXT:vcc/Resources/Private/Templates/PageRenderer.html');
+        $page .= $pageRenderer->render(PageRenderer::PART_FOOTER);
+
+        return $page;
     }
 }
