@@ -11,6 +11,10 @@ call_user_func(function () {
         $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vcc']['hooks']['communicationService'] = [];
     }
 
+    // Register hook to add the cache clear button to files
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['fileList']['editIconsHook']['vcc'] =
+        CPSIT\Vcc\Hooks\EditIconsHook::class;
+
     if (!empty($extensionConfiguration['esiSupport'])) {
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_fe.php']['contentPostProc-all']['vcc'] =
             \CPSIT\Vcc\Hooks\ContentPostProcessHook::class . '->replaceIntScripts';
