@@ -157,7 +157,15 @@ class LoggingService implements SingletonInterface
         // Adjust callerDepth due to separate function
         $callerDepth++;
         if (isset($trace[$callerDepth])) {
-            return $trace[$callerDepth];
+            return array_intersect_key(
+                $trace[$callerDepth],
+                [
+                    'class' => 'class',
+                    'file' => 'file',
+                    'function' => 'function',
+                    'line' => 'line',
+                ]
+            );
         }
 
         return [];
