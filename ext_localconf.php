@@ -6,6 +6,11 @@ if (!defined('TYPO3_MODE')) {
 call_user_func(function () {
     $extensionConfiguration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['vcc']);
 
+    // Initialize array for internal hooks
+    if (!isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vcc']['hooks']['communicationService'])) {
+        $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vcc']['hooks']['communicationService'] = [];
+    }
+
     if (!empty($extensionConfiguration['esiSupport'])) {
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_fe.php']['contentPostProc-all']['vcc'] =
             \CPSIT\Vcc\Hooks\ContentPostProcessHook::class . '->replaceIntScripts';

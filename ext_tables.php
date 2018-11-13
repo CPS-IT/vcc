@@ -18,11 +18,6 @@ call_user_func(function () {
             \CPSIT\Vcc\Hooks\ClearCachePostProcessHook::class . '->clearCacheByCommand';
     }
 
-    // Initialize array for internal hooks
-    if (!isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vcc']['hooks']['communicationService'])) {
-        $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vcc']['hooks']['communicationService'] = [];
-    }
-
     // Register sprite icons
     $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(TYPO3\CMS\Core\Imaging\IconRegistry::class);
     $iconRegistry->registerIcon(
