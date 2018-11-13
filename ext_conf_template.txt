@@ -30,3 +30,21 @@ pageNotFoundHeader = HTTP/1.0 404 Not Found
 
 # cat=esi; type=int+; label=Page not found response code: HTTP status code that is sent if an ESI request identifier is not found.
 pageNotFoundCode = 404
+
+# cat=cookie; type=boolean; label=Cookie support: Enable extended cookie management.
+cookieSupport = 0
+
+# cat=cookie; type=string; label=Preserved session data: Enter a comma separated list with keys which should not be tested. If one exists the cookie will be set.
+keys =
+
+# cat=cookie; type=boolean; label=Activate felogin functions: Enable multiple functions to support rsa and frontend login without cookie
+feloginEnable = 1
+
+# cat=cookie; type=boolean; label=Activate sr_freecap functions: Enable multiple functions to support freeCap CAPTCHA extension
+srfreecapEnable = 1
+
+# cat=cookie; type=int+; label=Page moves: Count of (different) pages before captcha information will be destroyed
+srfreecapMoves = 0
+
+# cat=cookie; type=boolean; label=Activate powermail (> 2.0) functions: Enable multiple functions to support powermail extension
+powermailEnable = 1
