@@ -16,6 +16,12 @@ httpMethod = BAN
 # cat=cache; type=options[HTTP/1.0=http_10,HTTP/1.1=http_11]; label=HTTP protocol: The HTTP protocol to use for the HTTP method.
 httpProtocol = http_11
 
+# cat=cache; type=string; label=Custom pid header: Send the current page id as header information for better ban possibilities
+pidHeader = X-TYPO3-Pid
+
+# cat=cache; type=boolean; label=Asynchronous cache invalidation: Send cache clearing requests for automatic mode asynchronously
+ajaxRequestQueue = 0
+
 # cat=cache; type=boolean; label=Strip slash: Strip appended slash in requested url to be able to adjust behaviour in Varnish vcl configuration.
 stripSlash = 0
 

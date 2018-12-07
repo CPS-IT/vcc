@@ -559,6 +559,10 @@ class CommunicationService implements SingletonInterface
                     // Set X-Host header
                     $headerArray = [];
                     $headerArray[] = 'X-Host: ' . (($quote) ? preg_quote($xHost) : $xHost);
+                    $headerArray[] = 'X-Url: /' . ltrim((($params['quote']) ? preg_quote($url) : $url), '/');
+                    if (!empty($pageId) && !empty($this->configuration['pidHeader'])) {
+                        $headerArray[] = $this->configuration['pidHeader'] . ': ' . $pageId;
+                    }
                     curl_setopt($ch, CURLOPT_HTTPHEADER, $headerArray);
 
                     // Store outgoing header

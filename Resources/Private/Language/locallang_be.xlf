@@ -6,6 +6,30 @@
             <trans-unit id="constants.typenum">
                 <source>Page TypeNum for ESI rendering</source>
             </trans-unit>
+            <trans-unit id="task.plugins">
+                <source>Plugins</source>
+            </trans-unit>
+            <trans-unit id="task.pages">
+                <source>Startingpoint</source>
+            </trans-unit>
+            <trans-unit id="task.depth">
+                <source>Depth</source>
+            </trans-unit>
+            <trans-unit id="task.access">
+                <source>Exclude hidden pages</source>
+            </trans-unit>
+            <trans-unit id="task.deleted">
+                <source>Include deleted pages</source>
+            </trans-unit>
+            <trans-unit id="task.language">
+                <source>Include translated pages</source>
+            </trans-unit>
+            <trans-unit id="task.hosts">
+                <source>Limit to hosts (comma-separated)</source>
+            </trans-unit>
+            <trans-unit id="task.email">
+                <source>Send debug information to</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -11,6 +11,51 @@ call_user_func(function () {
         $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vcc']['hooks']['communicationService'] = [];
     }
 
+    if ($extensionConfiguration['cacheControl'] === 'manual') {
+        // Register hook to add the cache clear button to configured items in different views
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['Backend\Template\Components\ButtonBar']['getButtonsHook']['vcc'] =
+            \CPSIT\Vcc\Hooks\ClearCacheIconHook::class . '->addButton';
+    } elseif ($extensionConfiguration['cacheControl'] === 'automatic') {
+        if (empty($extensionConfiguration['ajaxRequestQueue'])) {
+            $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['vcc'] =
+                \CPSIT\Vcc\Hooks\RecordSavedPostProcessHook::class;
+            $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc']['vcc'] =
+                \CPSIT\Vcc\Hooks\ClearCachePostProcessHook::class . '->clearCacheByCommand';
+        } else {
+            $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['vcc'] =
+                \CPSIT\Vcc\Hooks\AjaxRequestQueue\RecordSavedPostProcessHook::class;
+            $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc']['vcc'] =
+                \CPSIT\Vcc\Hooks\AjaxRequestQueue\ClearCachePostProcessHook::class . '->clearCacheByCommand';
+            $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess']['vcc'] =
+                \CPSIT\Vcc\Hooks\AjaxRequestQueue\WriteJavascriptHook::class . '->addAjaxRequestQueueDataFromSession';
+        }
+    }
+
+    if (!empty($extensionConfiguration['pidHeader'])) {
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_fe.php']['contentPostProc-output']['vcc'] =
+            \CPSIT\Vcc\Hooks\AddFrontendHeaderHook::class . '->addHeader';
+    }
+
+    $GLOBALS['TYPO3_CONF_VARS']['BE']['toolbarItems'][1498036520] =
+        \CPSIT\Vcc\Backend\ToolbarItems\AjaxRequestQueueToolbarItem::class;
+
+    $GLOBALS['TYPO3_CONF_VARS']['BE']['toolbarItems'][1498036612] =
+        \CPSIT\Vcc\Backend\ToolbarItems\CacheClearToolbarItem::class;
+
+    // Register scheduler tasks
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][\CPSIT\Vcc\Task\ClearCachePages::class] = [
+        'extension' => 'vcc',
+        'title' => 'Clear Varnish cache for pages',
+        'description' => 'Clears Varnish cache for chosen pages',
+        'additionalFields' => \CPSIT\Vcc\Task\AdditionalFieldsPages::class,
+    ];
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][\CPSIT\Vcc\Task\ClearCachePlugins::class] = [
+        'extension' => 'vcc',
+        'title' => 'Clear Varnish cache by plugin',
+        'description' => 'Clears Varnish cache for pages containing the chosen plugins',
+        'additionalFields' => \CPSIT\Vcc\Task\AdditionalFieldsPlugins::class,
+    ];
+
     // Register hook to add the cache clear button to files
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['fileList']['editIconsHook']['vcc'] =
         CPSIT\Vcc\Hooks\EditIconsHook::class;
