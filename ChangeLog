@@ -1,3 +1,6 @@
+2019-08-30         [RELEASE] Release of vcc 4.1.0 (Dirk Wenzel)
+2019-08-30 60a5ce8 Merged bug fixes and features from @meisterkaiser (Thomas Kaiser)
+
 2018-03-13         [RELEASE] Release of vcc 3.1.0 (Nicole Cordes)
 2018-03-13 01ebc2f [TASK] Raise compatibility to TYPO3 8.7 (Nicole Cordes)
 2017-06-21 619680a [BUGFIX] Enforce resetting PageRenderer->backPath in TYPO3 < 8 (Nicole Cordes)
