@@ -75,6 +75,7 @@ class EsiRenderer
 
     public function render()
     {
+
         $arguments = GeneralUtility::_GET('tx_vcc');
         if (empty($arguments['identifier']) || !is_string($arguments['identifier'])) {
             throw new  Exception('Missing identifier', 1538659647);
@@ -83,35 +84,57 @@ class EsiRenderer
         $cacheIdentifier = $this->hashService->validateAndStripHmac($arguments['identifier']);
 
         $configuration = $this->esiCache->get($cacheIdentifier);
+        $INTconfiguration = $configuration['INTconfiguration'];
 
-        if (empty($configuration)) {
+        if (empty($INTconfiguration)) {
             $this->setPageNotFound();
 
             return '';
         }
 
-        if (!empty($configuration['conf']['cache_timeout'])) {
-            $this->typoScriptFrontendController->page['cache_timeout'] = $configuration['conf']['cache_timeout'];
+        if (!empty($INTconfiguration['conf']['cache_timeout'])) {
+            $this->typoScriptFrontendController->page['cache_timeout'] = $INTconfiguration['conf']['cache_timeout'];
         } else {
             $this->typoScriptFrontendController->set_no_cache('ESI response is non-cacheable by default');
         }
-
-        return $this->intScriptRenderer->render($configuration);
+        return $this->intScriptRenderer->render($INTconfiguration);
     }
 
     protected function setPageNotFound()
     {
-        $configuration = $this->extensionSettingService->getConfiguration();
+        $extensionSettings = $this->extensionSettingService->getConfiguration();
         $this->typoScriptFrontendController->set_no_cache('No ESI configuration found');
         if (empty($this->typoScriptFrontendController->config['config']['additionalHeaders.'])) {
             $this->typoScriptFrontendController->config['config']['additionalHeaders.'] = [];
         }
         $this->typoScriptFrontendController->config['config']['additionalHeaders.'] += [
             [
-                'header' => $configuration['pageNotFoundHeader'],
-                'httpResponseCode' => (int)$configuration['pageNotFoundCode'],
+                'header' => $extensionSettings['pageNotFoundHeader'],
+                'httpResponseCode' => (int)$extensionSettings['pageNotFoundCode'],
                 'replace' => '1',
+                'cache-control' => $extensionSettings['pageNotFoundCacheHeaderValue'],
             ],
         ];
+    }
+
+    public function restoreRequestParameter() {
+
+        $arguments = GeneralUtility::_GET('tx_vcc');
+        if (empty($arguments['identifier']) || !is_string($arguments['identifier'])) {
+            return;
+        }
+
+        $cacheIdentifier = $this->hashService->validateAndStripHmac($arguments['identifier']);
+        $configuration = $this->esiCache->get($cacheIdentifier);
+        $requestParameter = $configuration['RequestParameter'];
+
+        // restore request parameter
+        if (is_array($requestParameter)) {
+            foreach (array_keys($requestParameter) as $key) {
+                if ($key != 'type') { // the request won't be routed properly if type parameter is overwritten at this point
+                    \TYPO3\CMS\Core\Utility\GeneralUtility::_GETset($requestParameter[$key], $key);
+                }
+            }
+        }
     }
 }

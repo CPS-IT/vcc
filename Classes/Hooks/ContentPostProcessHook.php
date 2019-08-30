@@ -33,6 +33,7 @@ use TYPO3\CMS\Core\Core\Bootstrap;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Security\Cryptography\HashService;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+use CPSIT\Vcc\Service\ExtensionSettingService;
 
 class ContentPostProcessHook
 {
@@ -65,12 +66,14 @@ class ContentPostProcessHook
         ApplicationContext $applicationContext = null,
         FrontendInterface $esiCache = null,
         HashService $hashService = null,
-        IntScriptRenderer $intScriptRenderer = null
+        IntScriptRenderer $intScriptRenderer = null,
+        ExtensionSettingService $extensionSettingService = null
     ) {
         $this->applicationContext = $applicationContext ?: Bootstrap::getInstance()->getApplicationContext();
         $this->esiCache = $esiCache ?: GeneralUtility::makeInstance(CacheManager::class)->getCache('tx_vcc_esi');
         $this->hashService = $hashService ?: GeneralUtility::makeInstance(HashService::class);
         $this->intScriptRenderer = $intScriptRenderer ?: GeneralUtility::makeInstance(IntScriptRenderer::class);
+        $this->extensionSettingService = $extensionSettingService ?: GeneralUtility::makeInstance(ExtensionSettingService::class);
     }
 
     public function replaceIntScripts(array $parameter)
@@ -82,19 +85,42 @@ class ContentPostProcessHook
             return;
         }
 
+        $extensionSettings = $this->extensionSettingService->getConfiguration();
+        if (!empty($extensionSettings['excludeDomains'])) {
+            $excludeDomains = explode(',', $extensionSettings['excludeDomains']);
+            if (in_array(\TYPO3\CMS\Core\Utility\GeneralUtility::getHostname(), $excludeDomains)) {
+                return;
+            }
+        }
+
         if (empty($this->typoScriptFrontendController->tmpl->setup['plugin.']['tx_vcc.']['settings.']['typeNum'])) {
             throw new Exception('Page TypeNum for ESI rendering must be set', 1538651331);
         }
 
-        $cacheTag = 'newHash_' . $this->typoScriptFrontendController->newHash;
-        $this->esiCache->flushByTag($cacheTag);
+        $cacheTag = 'newHash_' . $this->typoScriptFrontendController->getLockHash();
+        $requestParameter = array_merge(
+            \TYPO3\CMS\Core\Utility\GeneralUtility::_GET(),
+            \TYPO3\CMS\Core\Utility\GeneralUtility::_POST()
+        );
 
         $content = $this->typoScriptFrontendController->content;
         $contentObjectRenderer = $this->typoScriptFrontendController->cObj;
-        foreach ($this->typoScriptFrontendController->config['INTincScript'] as $identifier => $configuration) {
+        foreach ($this->typoScriptFrontendController->config['INTincScript'] as $identifier => $INTconfiguration) {
             $matches = [];
             if (preg_match('/<!--\s*' . preg_quote($identifier) . '\s*-->/i', $content, $matches)) {
+
+                $configuration = array(
+                    'INTconfiguration' => $INTconfiguration,
+                    'RequestParameter' => $requestParameter
+                );
+
                 $cacheIdentifier = md5(json_encode($configuration) . $cacheTag);
+
+                // allow external classes to modify cache identifier
+                if ($this instanceof CustomIdentifierInterface) {
+                    $cacheIdentifier = $this->modifyCacheIdentifier($cacheIdentifier, $INTconfiguration);
+                }
+
                 $this->esiCache->set($cacheIdentifier, $configuration, [$cacheTag]);
 
                 $addQueryStringMethod = $this->typoScriptFrontendController->cHash ? 'GET' : '';
@@ -112,7 +138,7 @@ class ContentPostProcessHook
                         'useCacheHash' => 1,
                     ]
                 );
-                $esiContent = '<!--esi <esi:include src="' . $link . '" />-->';
+                $esiContent = '<!--esi<esi:include src="' . $link . '" />-->';
                 if (!GeneralUtility::getIndpEnv('TYPO3_REV_PROXY') && $this->applicationContext->isDevelopment()) {
                     $esiContent .= '<esi:remove>' . $this->intScriptRenderer->render($configuration) . '</esi:remove>';
                 }
