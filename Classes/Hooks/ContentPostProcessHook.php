@@ -99,8 +99,7 @@ class ContentPostProcessHook
 
         $cacheTag = 'newHash_' . $this->typoScriptFrontendController->getLockHash();
         $requestParameter = array_merge(
-            \TYPO3\CMS\Core\Utility\GeneralUtility::_GET(),
-            \TYPO3\CMS\Core\Utility\GeneralUtility::_POST()
+            \TYPO3\CMS\Core\Utility\GeneralUtility::_GET()
         );
 
         $content = $this->typoScriptFrontendController->content;
