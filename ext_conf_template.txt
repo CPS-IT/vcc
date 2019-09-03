@@ -43,12 +43,6 @@ pageNotFoundCacheHeaderValue = no-cache, must-revalidate
 # cat=esi; type=string; label=Exclude certain domains from esi processing (comma separated list)
 excludeDomains = 
 
-# cat=esi; type=boolean; label=Use fe-user session_id as base for esi identifier on specific render calls to reduce cache variants for logged in FE USERS
-singleVariantForLoggedInFEUser = false
-
-# cat=esi; type=string; label=Identifier to look for in render configuration (comma-separated list), if any of these identifiers is found in the render configuration, singleVariantForLoggedInFEUser applies
-singleRequestIdentifier = 
-
 # cat=cookie; type=boolean; label=Cookie support: Enable extended cookie management.
 cookieSupport = 0
 
